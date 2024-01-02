@@ -26,6 +26,7 @@ public class CustomControllerAdvice {
     ResponseEntity<String> handleException(Exception ex) {
 
         log.error("An unexpected error occurred", ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage().isEmpty() ?
+                "An unexpected error occurred" : ex.getMessage());
     }
 }

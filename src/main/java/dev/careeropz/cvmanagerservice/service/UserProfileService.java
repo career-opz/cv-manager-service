@@ -46,6 +46,11 @@ public class UserProfileService {
         try {
             log.info("UserProfileService::createUserProfile Creating user profile for a user");
             UserInfoModel requestMappedModel = modelMapper.map(userInfoRequestDto, UserInfoModel.class);
+            Optional<UserInfoModel> existingUser = userInfoRepository.findByPersonalInfoEmail(requestMappedModel.getPersonalInfo().getEmail());
+            if (existingUser.isPresent()) {
+                log.error("UserProfileService::createUserProfile User with email {} already exists", requestMappedModel.getPersonalInfo().getEmail());
+                throw new IncorrectRequestDataException(String.format("%s :%s", USER_ALREADY_EXISTS, requestMappedModel.getPersonalInfo().getEmail()));
+            }
             UserInfoModel savedModel = userInfoRepository.save(requestMappedModel);
             log.info("UserProfileService::createUserProfile User profile created for a user");
             return modelMapper.map(savedModel, UserInfoResponseDto.class);
@@ -147,6 +152,7 @@ public class UserProfileService {
                 throw new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId));
             }
 
+            // TODO: Handle the email, it should not be updated
             UserInfoModel existingUser = existingUserOptional.get();
             modelMapper.map(userInfoRequestDto, existingUser);
 

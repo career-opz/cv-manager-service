@@ -1,5 +1,6 @@
 package dev.careeropz.cvmanagerservice.controller.userprofile;
 
+import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.DefaultFilesRequestDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.UserInfoRequestDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.DefaultFilesResponseDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.UserInfoResponseDto;
@@ -32,7 +33,16 @@ public class UserProfileController {
         return ResponseEntity.ok(createdUserProfile);
     }
 
-    @GetMapping("/default-docs/{userid}")
+    @PutMapping("/{userid}")
+    public ResponseEntity<UserInfoResponseDto> updateUserProfile(@PathVariable("userid") String userId,
+                                                                 @RequestBody @Valid UserInfoRequestDto userInfoRequestDto) {
+        log.info("UserProfileController::updateUserProfile Updating user profile for user id: {}", userId);
+        UserInfoResponseDto updatedUserProfile = userProfileService.updateUserProfile(userId, userInfoRequestDto);
+        log.info("UserProfileController::updateUserProfile User profile updated for user id: {}", userId);
+        return ResponseEntity.ok(updatedUserProfile);
+    }
+
+    @GetMapping("/{userid}/default-docs")
     public ResponseEntity<DefaultFilesResponseDto> getUserDefaultDocs(@PathVariable("userid") String userid){
         log.info("UserProfileController::getUserDefaultDocs Fetching default docs for user with ID: {}", userid);
         DefaultFilesResponseDto defaultFilesResponseDto = userProfileService.getUserDefaultDocs(userid);
@@ -40,15 +50,16 @@ public class UserProfileController {
         return ResponseEntity.ok(defaultFilesResponseDto);
     }
 
-    @PutMapping("/default-docs/{userid}")
-    public ResponseEntity<DefaultFilesResponseDto> updateUserDefaultDocs(@PathVariable("userid") String userid){
+    @PutMapping("/{userid}/default-docs")
+    public ResponseEntity<DefaultFilesResponseDto> updateUserDefaultDocs(@PathVariable("userid") String userid,
+                                                                         @RequestBody @Valid DefaultFilesRequestDto defaultFilesRequestDto){
         log.info("UserProfileController::updateUserDefaultDocs Updating default docs for user with ID: {}", userid);
-        DefaultFilesResponseDto defaultFilesResponseDto = userProfileService.getUserDefaultDocs(userid);
+        DefaultFilesResponseDto defaultFilesResponseDto = userProfileService.updateUserDefaultDocs(userid, defaultFilesRequestDto);
         log.info("UserProfileController::updateUserDefaultDocs Default docs updated for user with ID: {}", userid);
         return ResponseEntity.ok(defaultFilesResponseDto);
     }
 
-    @PutMapping("/deactivate/{userid}")
+    @PutMapping("{userid}/deactivate")
     public ResponseEntity<String> deactivateUserProfile(@PathVariable("userid") String userid){
         log.info("UserProfileController::deactivateUserProfile Deactivating user profile for user with ID: {}", userid);
         String response = userProfileService.deactivateUserProfile(userid);
@@ -56,7 +67,7 @@ public class UserProfileController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/activate/{userid}")
+    @PutMapping("/{userid}/activate")
     public ResponseEntity<String> activateUserProfile(@PathVariable("userid") String userid){
         log.info("UserProfileController::activateUserProfile Activating user profile for user with ID: {}", userid);
         String response = userProfileService.activateUserProfile(userid);
