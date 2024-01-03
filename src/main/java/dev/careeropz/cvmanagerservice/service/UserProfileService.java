@@ -33,87 +33,88 @@ public class UserProfileService {
     private final ModelMapper modelMapper;
 
     public UserInfoResponseDto getUserProfile(String userId) {
-        log.info("UserProfileService::getUserProfileInfo Fetching user profile for user id: {}", userId);
+        log.info("getUserProfile :: userid: {} :: ENTER", userId);
         return userInfoRepository.findById(userId)
                 .map(userInfo -> {
-                    log.info("UserProfileService::getUserProfileInfo User profile found for user id: {}", userId);
-                    return modelMapper.map(userInfo, UserInfoResponseDto.class);
+                    log.info("getUserProfile :: userInfoRepository:findById :: userid: {} :: DONE", userId);
+                    UserInfoResponseDto userInfoResponseDto = modelMapper.map(userInfo, UserInfoResponseDto.class);
+                    log.info("getUserProfile :: userid: {} :: DONE", userId);
+                    return userInfoResponseDto;
                 })
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId)));
     }
 
     public UserInfoResponseDto createUserProfile(UserInfoRequestDto userInfoRequestDto) {
         try {
-            log.info("UserProfileService::createUserProfile Creating user profile for a user");
+            log.info("createUserProfile :: ENTER");
             UserInfoModel requestMappedModel = modelMapper.map(userInfoRequestDto, UserInfoModel.class);
             Optional<UserInfoModel> existingUser = userInfoRepository.findByPersonalInfoEmail(requestMappedModel.getPersonalInfo().getEmail());
             if (existingUser.isPresent()) {
-                log.error("UserProfileService::createUserProfile User with email {} already exists", requestMappedModel.getPersonalInfo().getEmail());
+                log.warn("createUserProfile :: email: {} :: already exists", requestMappedModel.getPersonalInfo().getEmail());
                 throw new IncorrectRequestDataException(String.format("%s :%s", USER_ALREADY_EXISTS, requestMappedModel.getPersonalInfo().getEmail()));
             }
             UserInfoModel savedModel = userInfoRepository.save(requestMappedModel);
-            log.info("UserProfileService::createUserProfile User profile created for a user");
+            log.info("createUserProfile :: email: {} :: DONE", requestMappedModel.getPersonalInfo().getEmail());
             return modelMapper.map(savedModel, UserInfoResponseDto.class);
         } catch (MappingException e) {
-            log.error("UserProfileService::createUserProfile Error occurred while mapping request to model", e);
+            log.error("createUserProfile :: mapping request to model :: MappingException occurred", e);
             throw new IncorrectRequestDataException(INCORRECT_REQUEST_DATA);
         }
     }
 
     public DefaultFilesResponseDto getUserDefaultDocs(String userId) {
-        log.info("UserProfileService::getUserDefaultDocs Fetching default docs for user with ID: {}", userId);
+        log.info("getUserDefaultDocs :: userid: {} :: ENTER", userId);
         return userInfoRepository.findById(userId)
                 .map(userInfo -> {
-                    log.info("UserProfileService::getUserDefaultDocs Default docs found for user with ID: {}", userId);
-                    return modelMapper.map(userInfo.getDefaultFiles(), DefaultFilesResponseDto.class);
+                    log.info("getUserDefaultDocs :: userInfoRepository:findById :: userid: {} :: DONE", userId);
+                    DefaultFilesResponseDto defaultFilesResponseDto = modelMapper.map(userInfo.getDefaultFiles(), DefaultFilesResponseDto.class);
+                    log.info("getUserDefaultDocs :: userid: {} :: DONE", userId);
+                    return defaultFilesResponseDto;
                 })
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId)));
     }
 
     public DefaultFilesResponseDto updateUserDefaultDocs(String userId, DefaultFilesRequestDto defaultFilesRequestDto) {
         try {
-            log.info("UserProfileService::updateUserDefaultDocs Updating default docs for user with ID: {}", userId);
+            log.info("updateUserDefaultDocs :: userid: {} :: ENTER", userId);
             Optional<UserInfoModel> existingUserOptional = userInfoRepository.findById(userId);
             if (existingUserOptional.isEmpty()) {
-                log.error("UserProfileService::updateUserDefaultDocs User with ID {} not found", userId);
+                log.warn("updateUserDefaultDocs :: userid: {} :: NOT FOUND", userId);
                 throw new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId));
             }
-
             UserInfoModel existingUser = existingUserOptional.get();
             updateDefaultInfo(defaultFilesRequestDto, existingUser);
 
             UserInfoModel updatedModel = userInfoRepository.save(existingUser);
-            log.info("UserProfileService::updateUserDefaultDocs Default docs updated for user with ID: {}", userId);
+            log.info("updateUserDefaultDocs :: userid: {} :: DONE", userId);
 
             return modelMapper.map(updatedModel.getDefaultFiles(), DefaultFilesResponseDto.class);
         } catch (MappingException e) {
-            log.error("UserProfileService::updateUserDefaultDocs Error occurred while mapping request to model", e);
+            log.error("updateUserDefaultDocs :: mapping request to model :: MappingException occurred", e);
             throw new IncorrectRequestDataException(INCORRECT_REQUEST_DATA);
         }
     }
 
     public UserInfoResponseDto addJobProfileToUserProfile(String userId, JobProfileModel jobProfile) {
-        log.info("UserProfileService::addJobProfileToUserProfile Adding job profile to user profile for user with ID: {}", userId);
+        log.info("addJobProfileToUserProfile :: userid: {} :: ENTER", userId);
         Optional<UserInfoModel> existingUserOptional = userInfoRepository.findById(userId);
         if (existingUserOptional.isEmpty()) {
-            log.error("UserProfileService::addJobProfileToUserProfile User with ID {} not found", userId);
+            log.warn("addJobProfileToUserProfile :: userid: {} :: NOT FOUND", userId);
             throw new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId));
         }
-
         UserInfoModel existingUser = existingUserOptional.get();
         existingUser.getJobProfiles().add(jobProfile);
 
         UserInfoModel updatedModel = userInfoRepository.save(existingUser);
-        log.info("UserProfileService::addJobProfileToUserProfile Job profile added to user profile for user with ID: {}", userId);
-
+        log.info("addJobProfileToUserProfile :: userid: {} :: DONE", userId);
         return modelMapper.map(updatedModel, UserInfoResponseDto.class);
     }
 
     public String deactivateUserProfile(String userId) {
-        log.info("UserProfileService::deactivateUserProfile Deactivating user profile for user with ID: {}", userId);
+        log.info("deactivateUserProfile :: userid: {} :: ENTER", userId);
         Optional<UserInfoModel> existingUserOptional = userInfoRepository.findById(userId);
         if (existingUserOptional.isEmpty()) {
-            log.error("UserProfileService::deactivateUserProfile User with ID {} not found", userId);
+            log.warn("deactivateUserProfile :: userid: {} :: NOT FOUND", userId);
             throw new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId));
         }
 
@@ -121,16 +122,15 @@ public class UserProfileService {
         deactivateUser(existingUser);
 
         userInfoRepository.save(existingUser);
-        log.info("UserProfileService::deactivateUserProfile User profile deactivated for user with ID: {}", userId);
-
+        log.info("deactivateUserProfile :: userid: {} :: DONE", userId);
         return String.format("%s :%s", USER_DEACTIVATED, userId);
     }
 
     public String activateUserProfile(String userId) {
-        log.info("UserProfileService::activateUserProfile Activating user profile for user with ID: {}", userId);
+        log.info("activateUserProfile :: userid: {} :: ENTER", userId);
         Optional<UserInfoModel> existingUserOptional = userInfoRepository.findById(userId);
         if (existingUserOptional.isEmpty()) {
-            log.error("UserProfileService::activateUserProfile User with ID {} not found", userId);
+            log.warn("activateUserProfile :: userid: {} :: NOT FOUND", userId);
             throw new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId));
         }
 
@@ -138,30 +138,26 @@ public class UserProfileService {
         activateUser(existingUser);
 
         userInfoRepository.save(existingUser);
-        log.info("UserProfileService::activateUserProfile User profile activated for user with ID: {}", userId);
-
+        log.info("activateUserProfile :: userid: {} :: DONE", userId);
         return String.format("%s :%s", USER_ACTIVATED, userId);
     }
 
     public UserInfoResponseDto updateUserProfile(String userId, UserInfoRequestDto userInfoRequestDto) {
+        log.info("updateUserProfile :: userid: {} :: ENTER", userId);
         try {
-            log.info("UserProfileService::updateUserProfile Updating user profile for user with ID: {}", userId);
             Optional<UserInfoModel> existingUserOptional = userInfoRepository.findById(userId);
             if (existingUserOptional.isEmpty()) {
-                log.error("UserProfileService::updateUserProfile User with ID {} not found", userId);
+                log.warn("updateUserProfile :: userid: {} :: NOT FOUND", userId);
                 throw new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId));
             }
-
             // TODO: Handle the email, it should not be updated
             UserInfoModel existingUser = existingUserOptional.get();
             modelMapper.map(userInfoRequestDto, existingUser);
 
             UserInfoModel updatedModel = userInfoRepository.save(existingUser);
-            log.info("UserProfileService::updateUserProfile User profile updated for user with ID: {}", userId);
-
+            log.info("updateUserProfile :: userid: {} :: DONE", userId);
             return modelMapper.map(updatedModel, UserInfoResponseDto.class);
         } catch (MappingException e) {
-            log.error("UserProfileService::updateUserProfile Error occurred while mapping request to model", e);
             throw new IncorrectRequestDataException(INCORRECT_REQUEST_DATA);
         }
     }

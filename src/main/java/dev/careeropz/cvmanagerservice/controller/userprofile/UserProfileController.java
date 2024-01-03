@@ -19,59 +19,59 @@ public class UserProfileController {
     private final UserProfileService userProfileService;
     @GetMapping("/{userid}")
     public ResponseEntity<UserInfoResponseDto> getUserProfileById(@PathVariable("userid") String userId) {
-        log.info("UserProfileController::getUserProfileById Fetching user profile for user id: {}", userId);
+        log.info("getUserProfileById :: userid: {} :: ENTER", userId);
         UserInfoResponseDto userInfoResponseDto = userProfileService.getUserProfile(userId);
-        log.info("UserProfileController::getUserProfileById User profile found for user id: {}", userId);
+        log.info("getUserProfileById :: userid: {} :: DONE", userId);
         return ResponseEntity.ok(userInfoResponseDto);
     }
 
     @PostMapping
     public ResponseEntity<UserInfoResponseDto> createUserProfile(@RequestBody @Valid UserInfoRequestDto userInfoRequestDto) {
-        log.info("UserProfileController::createUserProfile Creating user profile for a user");
+        log.info("createUserProfile :: ENTER");
         UserInfoResponseDto createdUserProfile = userProfileService.createUserProfile(userInfoRequestDto);
-        log.info("UserProfileController::createUserProfile User profile created for a user");
+        log.info("createUserProfile :: DONE");
         return ResponseEntity.ok(createdUserProfile);
     }
 
     @PutMapping("/{userid}")
     public ResponseEntity<UserInfoResponseDto> updateUserProfile(@PathVariable("userid") String userId,
                                                                  @RequestBody @Valid UserInfoRequestDto userInfoRequestDto) {
-        log.info("UserProfileController::updateUserProfile Updating user profile for user id: {}", userId);
+        log.info("updateUserProfile :: userid: {} :: ENTER", userId);
         UserInfoResponseDto updatedUserProfile = userProfileService.updateUserProfile(userId, userInfoRequestDto);
-        log.info("UserProfileController::updateUserProfile User profile updated for user id: {}", userId);
+        log.info("updateUserProfile :: userid: {} :: DONE", userId);
         return ResponseEntity.ok(updatedUserProfile);
     }
 
     @GetMapping("/{userid}/default-docs")
     public ResponseEntity<DefaultFilesResponseDto> getUserDefaultDocs(@PathVariable("userid") String userid){
-        log.info("UserProfileController::getUserDefaultDocs Fetching default docs for user with ID: {}", userid);
+        log.info("getUserDefaultDocs :: userid: {} :: ENTER", userid);
         DefaultFilesResponseDto defaultFilesResponseDto = userProfileService.getUserDefaultDocs(userid);
-        log.info("UserProfileController::getUserDefaultDocs Default docs found for user with ID: {}", userid);
+        log.info("getUserDefaultDocs :: userid: {} :: DONE", userid);
         return ResponseEntity.ok(defaultFilesResponseDto);
     }
 
     @PutMapping("/{userid}/default-docs")
     public ResponseEntity<DefaultFilesResponseDto> updateUserDefaultDocs(@PathVariable("userid") String userid,
                                                                          @RequestBody @Valid DefaultFilesRequestDto defaultFilesRequestDto){
-        log.info("UserProfileController::updateUserDefaultDocs Updating default docs for user with ID: {}", userid);
+        log.info("updateUserDefaultDocs :: userid: {} :: ENTER", userid);
         DefaultFilesResponseDto defaultFilesResponseDto = userProfileService.updateUserDefaultDocs(userid, defaultFilesRequestDto);
-        log.info("UserProfileController::updateUserDefaultDocs Default docs updated for user with ID: {}", userid);
+        log.info("updateUserDefaultDocs :: userid: {} :: DONE", userid);
         return ResponseEntity.ok(defaultFilesResponseDto);
     }
 
     @PutMapping("{userid}/deactivate")
     public ResponseEntity<String> deactivateUserProfile(@PathVariable("userid") String userid){
-        log.info("UserProfileController::deactivateUserProfile Deactivating user profile for user with ID: {}", userid);
+        log.info("deactivateUserProfile :: userid: {} :: ENTER", userid);
         String response = userProfileService.deactivateUserProfile(userid);
-        log.info("UserProfileController::deactivateUserProfile User profile deactivated for user with ID: {}", userid);
+        log.info("deactivateUserProfile :: userid: {} :: DONE", userid);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{userid}/activate")
     public ResponseEntity<String> activateUserProfile(@PathVariable("userid") String userid){
-        log.info("UserProfileController::activateUserProfile Activating user profile for user with ID: {}", userid);
+        log.info("activateUserProfile :: userid: {} :: ENTER", userid);
         String response = userProfileService.activateUserProfile(userid);
-        log.info("UserProfileController::activateUserProfile User profile activated for user with ID: {}", userid);
+        log.info("activateUserProfile :: userid: {} :: DONE", userid);
         return ResponseEntity.ok(response);
     }
 }
