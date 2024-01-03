@@ -1,6 +1,6 @@
 package dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto;
 
-import jakarta.validation.constraints.Pattern;
+import dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto.CountryDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PersonalInfoResponseDto {
-    String firstName;
-    String lastName;
-    String email;
-    @Pattern(regexp = "\\d{10,15}") String mobile; // Assuming a pattern for a valid mobile number
-    String address;
-    String country;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String mobile;
+    private String address;
+    private CountryDto country;
 }

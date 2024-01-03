@@ -10,5 +10,4 @@ import lombok.NoArgsConstructor;
 public class DefaultFilesRequestDto {
     private FileDataRequestDto cv;
     private FileDataRequestDto coverLetter;
-    private FileDataRequestDto userPhoto;
 }

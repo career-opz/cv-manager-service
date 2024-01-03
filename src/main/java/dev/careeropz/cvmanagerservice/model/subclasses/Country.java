@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DefaultFiles {
-    private FileData cv;
-    private FileData coverLetter;
+public class Country {
+    private String code;
+    private String label;
+    private String phone;
+    Boolean suggested;
 }

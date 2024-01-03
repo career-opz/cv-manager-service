@@ -16,7 +16,9 @@ public class UserInfoResponseDto {
     PersonalInfoResponseDto personalInfo;
     CareerInfoResponseDto careerInfo;
     DefaultFilesResponseDto defaultFiles;
+    FileDataResponseDto profilePicture;
     Map<String, String> links;
     Date accountCreatedOn;
+    Date lastLoginOn;
     List<String> jobProfiles;
 }

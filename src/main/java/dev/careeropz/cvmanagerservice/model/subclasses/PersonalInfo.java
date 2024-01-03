@@ -1,5 +1,6 @@
 package dev.careeropz.cvmanagerservice.model.subclasses;
 
+import dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto.CountryDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,5 +16,5 @@ public class PersonalInfo {
     private String email;
     private String mobile;
     private String address;
-    private String country;
+    private Country country;
 }

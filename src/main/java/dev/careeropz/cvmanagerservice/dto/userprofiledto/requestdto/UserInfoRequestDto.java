@@ -16,6 +16,8 @@ public class UserInfoRequestDto{
         @Valid PersonalInfoRequestDto personalInfo;
         @Valid CareerInfoRequestDto careerInfo;
         @Valid DefaultFilesRequestDto defaultFiles;
+        @Valid FileDataRequestDto profilePicture;
         Map<String, String> links;
         @Past Date accountCreatedOn;
+        Date lastLoginOn;
 }
