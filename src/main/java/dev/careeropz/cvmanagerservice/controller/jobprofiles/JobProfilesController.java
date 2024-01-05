@@ -2,7 +2,6 @@ package dev.careeropz.cvmanagerservice.controller.jobprofiles;
 
 import dev.careeropz.cvmanagerservice.dto.jobprofile.requestdto.JobProfileRequestDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto.JobProfileResponseDto;
-import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.UserInfoResponseDto;
 import dev.careeropz.cvmanagerservice.service.JobProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/cv/api/v1/job-profile/{userid}")
+@RequestMapping("/cv/api/v1/job-profile/user/{userid}")
 @Slf4j
 public class JobProfilesController {
     private final JobProfileService jobProfileService;
@@ -31,7 +30,6 @@ public class JobProfilesController {
     public ResponseEntity<JobProfileResponseDto> createJobProfile(@PathVariable("userid") String userId,
                                                                   @RequestBody @Valid JobProfileRequestDto jobProfileRequestDto) {
         log.info("JobProfilesController::createJobProfile Creating job profile for a user id: {} ::ENTER", userId);
-        jobProfileRequestDto.setUserId(userId);
         JobProfileResponseDto jobProfileResponseDto = jobProfileService.createJobProfile(userId, jobProfileRequestDto);
         log.info("JobProfilesController::createJobProfile Creating job profile for a user id: {} ::DONE", userId);
         return ResponseEntity.ok(jobProfileResponseDto);

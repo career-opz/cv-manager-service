@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface JobProfileRepository extends MongoRepository<JobProfileModel, String> {
-    Optional<List<JobProfileModel>> findAllByUserid(String userid);
+    Optional<List<JobProfileModel>> findAllByUserRef(String userid);
 }

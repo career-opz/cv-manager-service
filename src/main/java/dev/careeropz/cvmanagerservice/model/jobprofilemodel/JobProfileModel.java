@@ -2,8 +2,10 @@ package dev.careeropz.cvmanagerservice.model.jobprofilemodel;
 
 import dev.careeropz.cvmanagerservice.model.UserInfoModel;
 import dev.careeropz.cvmanagerservice.model.constants.StatusEnum;
+import dev.careeropz.cvmanagerservice.model.subclasses.Country;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
@@ -16,11 +18,11 @@ public class JobProfileModel {
     @Id
     private String id;
 
-    @DocumentReference
-    private UserInfoModel userid;
+    @DocumentReference(lazy = true)
+    private UserInfoModel userRef;
 
     private String companyName;
-    private String country;
+    private Country country;
     private String industry;
     private String companyWebsite;
     private String companyCareersPage;

@@ -1,4 +1,4 @@
-package dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto;
+package dev.careeropz.cvmanagerservice.dto.commondto;
 
 import lombok.Data;
 

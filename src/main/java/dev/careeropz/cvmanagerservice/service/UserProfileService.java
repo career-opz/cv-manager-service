@@ -14,23 +14,33 @@ import dev.careeropz.cvmanagerservice.model.subclasses.CareerInfo;
 import dev.careeropz.cvmanagerservice.model.subclasses.DefaultFiles;
 import dev.careeropz.cvmanagerservice.model.subclasses.PersonalInfo;
 import dev.careeropz.cvmanagerservice.repository.UserInfoRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.Condition;
+import org.modelmapper.Converter;
 import org.modelmapper.MappingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static dev.careeropz.cvmanagerservice.MessageConstents.ExceptionConstants.*;
 import static dev.careeropz.cvmanagerservice.service.ServiceConstants.*;
 
-@RequiredArgsConstructor
 @Service
 @Slf4j
 public class UserProfileService {
     private final UserInfoRepository userInfoRepository;
     private final ModelMapper modelMapper;
+
+    public UserProfileService(UserInfoRepository userInfoRepository, ModelMapper modelMapper) {
+        this.userInfoRepository = userInfoRepository;
+        this.modelMapper = modelMapper;
+        addUserProfileToResponseMapper();
+    }
 
     public UserInfoResponseDto getUserProfile(String userId) {
         log.info("getUserProfile :: userid: {} :: ENTER", userId);
@@ -41,6 +51,12 @@ public class UserProfileService {
                     log.info("getUserProfile :: userid: {} :: DONE", userId);
                     return userInfoResponseDto;
                 })
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId)));
+    }
+
+    public UserInfoModel getUserInfoModel(String userId) {
+        log.info("getUserInfoModel :: userid: {} :: ENTER", userId);
+        return userInfoRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId)));
     }
 
@@ -95,21 +111,6 @@ public class UserProfileService {
         }
     }
 
-    public UserInfoResponseDto addJobProfileToUserProfile(String userId, JobProfileModel jobProfile) {
-        log.info("addJobProfileToUserProfile :: userid: {} :: ENTER", userId);
-        Optional<UserInfoModel> existingUserOptional = userInfoRepository.findById(userId);
-        if (existingUserOptional.isEmpty()) {
-            log.warn("addJobProfileToUserProfile :: userid: {} :: NOT FOUND", userId);
-            throw new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId));
-        }
-        UserInfoModel existingUser = existingUserOptional.get();
-        existingUser.getJobProfiles().add(jobProfile);
-
-        UserInfoModel updatedModel = userInfoRepository.save(existingUser);
-        log.info("addJobProfileToUserProfile :: userid: {} :: DONE", userId);
-        return modelMapper.map(updatedModel, UserInfoResponseDto.class);
-    }
-
     public String deactivateUserProfile(String userId) {
         log.info("deactivateUserProfile :: userid: {} :: ENTER", userId);
         Optional<UserInfoModel> existingUserOptional = userInfoRepository.findById(userId);
@@ -162,10 +163,42 @@ public class UserProfileService {
         }
     }
 
-    private UserInfoModel updateDefaultInfo(DefaultFilesRequestDto defaultFilesRequestDto, UserInfoModel targetModel) {
+    @Transactional
+    public void addJobProfileToUserProfile(String userId, JobProfileModel jobProfile) {
+        log.info("addJobProfileToUserProfile :: userid: {} :: ENTER", userId);
+        Optional<UserInfoModel> existingUserOptional = userInfoRepository.findById(userId);
+        if (existingUserOptional.isEmpty()) {
+            log.warn("addJobProfileToUserProfile :: userid: {} :: NOT FOUND", userId);
+            throw new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId));
+        }
+        UserInfoModel existingUser = existingUserOptional.get();
+        if(existingUser.getJobProfiles() == null){
+            existingUser.setJobProfiles(new ArrayList<>());
+        }
+        existingUser.getJobProfiles().add(jobProfile);
+
+        userInfoRepository.save(existingUser);
+        log.info("addJobProfileToUserProfile :: userid: {} :: DONE", userId);
+    }
+
+    @Transactional
+    public void removeJobProfileFromUserProfile(String userId, String jobProfileId) {
+        log.info("removeJobProfileFromUserProfile :: userid: {} :: ENTER", userId);
+        Optional<UserInfoModel> existingUserOptional = userInfoRepository.findById(userId);
+        if (existingUserOptional.isEmpty()) {
+            log.warn("removeJobProfileFromUserProfile :: userid: {} :: NOT FOUND", userId);
+            throw new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId));
+        }
+        UserInfoModel existingUser = existingUserOptional.get();
+        existingUser.getJobProfiles().removeIf(jobProfileModel -> jobProfileModel.getId().equals(jobProfileId));
+
+        userInfoRepository.save(existingUser);
+        log.info("removeJobProfileFromUserProfile :: userid: {} :: DONE", userId);
+    }
+
+    private void updateDefaultInfo(DefaultFilesRequestDto defaultFilesRequestDto, UserInfoModel targetModel) {
         DefaultFiles defaultFiles = modelMapper.map(defaultFilesRequestDto, DefaultFiles.class);
         targetModel.setDefaultFiles(defaultFiles);
-        return targetModel;
     }
 
     private UserInfoModel updatePersonalInfo(PersonalInfoRequestDto personalInfoRequestDto, UserInfoModel targetModel) {
@@ -180,13 +213,22 @@ public class UserProfileService {
         return targetModel;
     }
 
-    private UserInfoModel deactivateUser(UserInfoModel targetModel) {
+    private void deactivateUser(UserInfoModel targetModel) {
         targetModel.setAccountActive(false);
-        return targetModel;
     }
 
-    private UserInfoModel activateUser(UserInfoModel targetModel) {
+    private void activateUser(UserInfoModel targetModel) {
         targetModel.setAccountActive(true);
-        return targetModel;
+    }
+
+    private void addUserProfileToResponseMapper(){
+        Condition<JobProfileModel, Collection<String>> hasJobProfile = ctx -> ctx.getSource() != null;
+        Converter<Collection<JobProfileModel>, Collection<String>> jobProfileConverter = ctx -> ctx.getSource()
+                .stream()
+                .map(JobProfileModel::getId)
+                .toList();
+        modelMapper.typeMap(UserInfoModel.class, UserInfoResponseDto.class)
+                .addMappings(mapper -> mapper.when(hasJobProfile).using(jobProfileConverter)
+                        .map(UserInfoModel::getJobProfiles, UserInfoResponseDto::setJobProfiles));
     }
 }

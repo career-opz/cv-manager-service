@@ -1,6 +1,5 @@
 package dev.careeropz.cvmanagerservice.model.subclasses;
 
-import dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto.CountryDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

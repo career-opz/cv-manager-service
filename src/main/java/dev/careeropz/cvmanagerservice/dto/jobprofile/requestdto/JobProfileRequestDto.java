@@ -1,5 +1,6 @@
 package dev.careeropz.cvmanagerservice.dto.jobprofile.requestdto;
 
+import dev.careeropz.cvmanagerservice.dto.commondto.CountryDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.JobProfileStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,9 +13,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JobProfileRequestDto {
-    private String userId;
+    private String userRef;
     private String companyName;
     private String industry;
+    private CountryDto country;
     private String companyWebsite;
     private String companyCareersPage;
     private JobProfileStatus jobProfileStatus;
