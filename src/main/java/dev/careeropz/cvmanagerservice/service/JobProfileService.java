@@ -7,14 +7,15 @@ import dev.careeropz.cvmanagerservice.exception.IncorrectRequestDataException;
 import dev.careeropz.cvmanagerservice.exception.ResourceNotFoundException;
 import dev.careeropz.cvmanagerservice.model.UserInfoModel;
 import dev.careeropz.cvmanagerservice.model.jobprofilemodel.JobProfileModel;
+import dev.careeropz.cvmanagerservice.model.jobprofilemodel.JobProfileProgressStep;
 import dev.careeropz.cvmanagerservice.repository.JobProfileRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.MappingException;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
+import org.bson.types.ObjectId;
+import org.modelmapper.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ public class JobProfileService {
 
     public List<JobProfileResponseDto> getAllJobProfiles(String userId) {
         log.info("JobProfileService::getAllJobProfiles Fetching all job profiles for user id: {} ::ENTER", userId);
-        return jobProfileRepository.findAllByUserRef(userId)
+        return jobProfileRepository.findByUserRef(new ObjectId(userId))
                 .map(jobProfileModelList -> {
                     log.info("JobProfileService::getAllJobProfiles Fetching all job profiles for user id: {} ::DONE", userId);
                     return jobProfileModelList
@@ -105,9 +106,13 @@ public class JobProfileService {
     }
 
     private void addJobProfileToResponseMapper() {
-        TypeMap<JobProfileModel, JobProfileResponseDto> modelToResMapper = this.modelMapper.createTypeMap(JobProfileModel.class, JobProfileResponseDto.class);
-        modelToResMapper.addMappings(
-                mapper -> mapper.map(src -> src.getUserRef().getId(), JobProfileResponseDto::setUserRef)
-        );
+        TypeMap<JobProfileModel, JobProfileResponseDto> jobProfileModelToResponseMapper = this.modelMapper.createTypeMap(JobProfileModel.class, JobProfileResponseDto.class);
+        Condition<Collection<JobProfileProgressStep>, String> hasProgress = context -> context.getSource() != null && !context.getSource().isEmpty();
+        Converter<Collection<JobProfileProgressStep>, String> lastProgressTitleConverter = context -> ((JobProfileProgressStep)context.getSource().toArray()[context.getSource().size() - 1]).getTitle();
+        jobProfileModelToResponseMapper
+                .addMappings(mapper -> mapper.map(src -> src.getUserRef().getId(), JobProfileResponseDto::setUserRef))
+                .addMappings(mapper -> mapper.when(hasProgress).using(lastProgressTitleConverter)
+                        .map(JobProfileModel::getProgress, JobProfileResponseDto::setLastProgressTitle));
+
     }
 }

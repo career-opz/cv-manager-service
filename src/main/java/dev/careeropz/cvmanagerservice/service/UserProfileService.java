@@ -222,7 +222,7 @@ public class UserProfileService {
     }
 
     private void addUserProfileToResponseMapper(){
-        Condition<JobProfileModel, Collection<String>> hasJobProfile = ctx -> ctx.getSource() != null;
+        Condition<Collection<JobProfileModel>, Collection<String>> hasJobProfile = ctx -> ctx.getSource() != null && !ctx.getSource().isEmpty();
         Converter<Collection<JobProfileModel>, Collection<String>> jobProfileConverter = ctx -> ctx.getSource()
                 .stream()
                 .map(JobProfileModel::getId)

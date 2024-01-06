@@ -23,5 +23,6 @@ public class JobProfileResponseDto {
     private JobProfileStatus status;
     private Date createdOn;
     private Date updatedOn;
+    private String lastProgressTitle;
     private List<JobProfileProgressStepResponseDto> progress;
 }
