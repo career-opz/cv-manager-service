@@ -49,7 +49,7 @@ public class JobProfilesController {
                                                                       @PathVariable("job-profile-id") String jobProfileId,
                                                                       @RequestBody @Valid JobProfileRequestDto jobProfileRequestDto) {
         log.info("JobProfilesController::updateJobProfileById Updating job profile for job profile id: {} ::ENTER", jobProfileId);
-        JobProfileResponseDto jobProfileResponseDto = jobProfileService.updateJobProfile(jobProfileId, jobProfileRequestDto);
+        JobProfileResponseDto jobProfileResponseDto = jobProfileService.updateJobProfile(userId, jobProfileId, jobProfileRequestDto);
         log.info("JobProfilesController::updateJobProfileById Updating job profile for job profile id: {} ::DONE", jobProfileId);
         return ResponseEntity.ok(jobProfileResponseDto);
     }

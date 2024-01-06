@@ -19,8 +19,8 @@ public class JobProfileRequestDto {
     private CountryDto country;
     private String companyWebsite;
     private String companyCareersPage;
-    private JobProfileStatus jobProfileStatus;
-    private Date jobProfileCreatedOn;
-    private Date jobProfileUpdatedOn;
+    private JobProfileStatus status;
+    private Date createdOn;
+    private Date updatedOn;
     private List<JobProfileProgressStepRequestDto> progress;
 }

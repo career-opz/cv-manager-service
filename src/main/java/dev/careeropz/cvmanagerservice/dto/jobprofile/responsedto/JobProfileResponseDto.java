@@ -16,8 +16,8 @@ public class JobProfileResponseDto {
     private String id;
     private String userRef;
     private String companyName;
-    private CountryDto country;
     private String industry;
+    private CountryDto country;
     private String companyWebsite;
     private String companyCareersPage;
     private JobProfileStatus status;

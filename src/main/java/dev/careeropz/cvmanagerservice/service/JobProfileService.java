@@ -79,10 +79,12 @@ public class JobProfileService {
         }
     }
 
-    public JobProfileResponseDto updateJobProfile(String jobProfileId, JobProfileRequestDto jobProfileRequestDto) {
+    public JobProfileResponseDto updateJobProfile(String userid, String jobProfileId, JobProfileRequestDto jobProfileRequestDto) {
         try {
             log.info("JobProfileService::updateJobProfile Updating job profile for job profile id: {} ::ENTER", jobProfileId);
+            UserInfoModel userInfoModel = userProfileService.getUserInfoModel(userid);
             JobProfileModel jobProfileModel = modelMapper.map(jobProfileRequestDto, JobProfileModel.class);
+            jobProfileModel.setUserRef(userInfoModel);
             jobProfileModel.setId(jobProfileId);
             JobProfileModel savedModel = jobProfileRepository.save(jobProfileModel);
             log.info("JobProfileService::updateJobProfile Updating job profile for job profile id: {} ::DONE", jobProfileId);
