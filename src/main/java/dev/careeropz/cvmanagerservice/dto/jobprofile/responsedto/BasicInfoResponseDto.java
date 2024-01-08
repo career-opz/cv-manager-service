@@ -1,5 +1,6 @@
-package dev.careeropz.cvmanagerservice.dto.jobprofile.commondto;
+package dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto;
 
+import dev.careeropz.cvmanagerservice.dto.jobprofile.commondto.JobProfileStatus;
 import dev.careeropz.cvmanagerservice.model.subclasses.Country;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +11,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BasicInfoDto {
+public class BasicInfoResponseDto {
     private String companyName;
     private String industry;
     private Country country;
@@ -19,4 +20,5 @@ public class BasicInfoDto {
     private JobProfileStatus status;
     private Date createdOn;
     private Date updatedOn;
+    private String note;
 }
