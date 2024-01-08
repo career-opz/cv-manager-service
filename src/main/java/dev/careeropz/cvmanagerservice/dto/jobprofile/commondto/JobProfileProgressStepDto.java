@@ -1,4 +1,4 @@
-package dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto;
+package dev.careeropz.cvmanagerservice.dto.jobprofile.commondto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,9 +10,10 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class JobProfileProgressStepResponseDto {
+public class JobProfileProgressStepDto {
+    private int id;
     private String title;
     private String description;
     private Date date;
-    private List<StepUploadResponseDto> uploads;
+    private ProgressUploadsDto uploads;
 }

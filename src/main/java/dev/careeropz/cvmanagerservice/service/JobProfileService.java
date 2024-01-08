@@ -114,7 +114,7 @@ public class JobProfileService {
         jobProfileModelToResponseMapper
                 .addMappings(mapper -> mapper.map(src -> src.getUserRef().getId(), JobProfileResponseDto::setUserRef))
                 .addMappings(mapper -> mapper.when(hasProgress).using(lastProgressTitleConverter)
-                        .map(JobProfileModel::getProgress, JobProfileResponseDto::setLastProgressTitle));
+                        .map(JobProfileModel::getProgress, JobProfileResponseDto::setNote));
 
     }
 }

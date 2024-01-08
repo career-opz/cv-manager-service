@@ -7,11 +7,12 @@ import lombok.ToString;
 @Getter
 @AllArgsConstructor
 @ToString
-public enum StatusEnum {
-    APPLIED("APPLIED"),
-    SHORTLISTED("SHORTLISTED"),
-    ACTIVE("PROCESSING"),
-    REJECTED("REJECTED");
+public enum JobProfileModelStatus {
+    PENDING("PENDING"),
+    SUCCESS("SUCCESS"),
+    PROCESSING("PROCESSING"),
+    REJECTED("REJECTED"),
+    ABUNDANT("ABUNDANT");
 
     private final String status;
 }

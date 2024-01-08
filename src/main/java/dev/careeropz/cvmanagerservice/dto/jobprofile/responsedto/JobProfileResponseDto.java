@@ -1,12 +1,11 @@
 package dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto;
 
-import dev.careeropz.cvmanagerservice.dto.commondto.CountryDto;
-import dev.careeropz.cvmanagerservice.dto.jobprofile.JobProfileStatus;
+import dev.careeropz.cvmanagerservice.dto.jobprofile.commondto.BasicInfoDto;
+import dev.careeropz.cvmanagerservice.dto.jobprofile.commondto.JobProfileProgressStepDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -15,14 +14,8 @@ import java.util.List;
 public class JobProfileResponseDto {
     private String id;
     private String userRef;
-    private String companyName;
-    private String industry;
-    private CountryDto country;
-    private String companyWebsite;
-    private String companyCareersPage;
-    private JobProfileStatus status;
-    private Date createdOn;
-    private Date updatedOn;
-    private String lastProgressTitle;
-    private List<JobProfileProgressStepResponseDto> progress;
+
+    private BasicInfoDto basicInfo;
+    private String note;
+    private List<JobProfileProgressStepDto> progress;
 }
