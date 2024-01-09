@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -18,6 +19,5 @@ public class BasicInfoRequestDto {
     private String position;
     private String companyWebsite;
     private JobProfileStatus status;
-    private Date createdOn;
-    private Date updatedOn;
+    private LocalDate appliedDate;
 }
