@@ -1,4 +1,4 @@
-package dev.careeropz.cvmanagerservice.MessageConstents;
+package dev.careeropz.cvmanagerservice.constant;
 
 public class ExceptionConstants {
     public static final String INCORRECT_REQUEST_DATA = "Incorrect request data";

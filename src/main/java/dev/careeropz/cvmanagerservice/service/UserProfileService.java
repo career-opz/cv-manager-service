@@ -4,7 +4,9 @@ import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.CareerInfoRe
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.DefaultFilesRequestDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.PersonalInfoRequestDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.UserInfoRequestDto;
+import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.CareerInfoResponseDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.DefaultFilesResponseDto;
+import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.PersonalInfoResponseDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.UserInfoResponseDto;
 import dev.careeropz.cvmanagerservice.exception.IncorrectRequestDataException;
 import dev.careeropz.cvmanagerservice.exception.ResourceNotFoundException;
@@ -24,10 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-import static dev.careeropz.cvmanagerservice.MessageConstents.ExceptionConstants.*;
+import static dev.careeropz.cvmanagerservice.constant.ExceptionConstants.*;
 import static dev.careeropz.cvmanagerservice.service.ServiceConstants.*;
 
 @Service
@@ -109,6 +111,64 @@ public class UserProfileService {
             log.error("updateUserDefaultDocs :: mapping request to model :: MappingException occurred", e);
             throw new IncorrectRequestDataException(INCORRECT_REQUEST_DATA);
         }
+    }
+
+    public PersonalInfoResponseDto updatePersonalInfo(String userId, PersonalInfoRequestDto personalInfoRequestDto) {
+        try {
+            log.info("updateUserInfo :: userid: {} :: ENTER", userId);
+            Optional<UserInfoModel> existingUserOptional = userInfoRepository.findById(userId);
+            if (existingUserOptional.isEmpty()) {
+                log.warn("updateUserInfo :: userid: {} :: NOT FOUND", userId);
+                throw new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId));
+            }
+            UserInfoModel existingUser = existingUserOptional.get();
+            updatePersonalInfo(personalInfoRequestDto, existingUser);
+
+            UserInfoModel updatedModel = userInfoRepository.save(existingUser);
+            log.info("updateUserInfo :: userid: {} :: DONE", userId);
+
+            return modelMapper.map(updatedModel.getPersonalInfo(), PersonalInfoResponseDto.class);
+        } catch (MappingException e) {
+            log.error("updateUserInfo :: mapping request to model :: MappingException occurred", e);
+            throw new IncorrectRequestDataException(INCORRECT_REQUEST_DATA);
+        }
+    }
+
+    public CareerInfoResponseDto updateCareerInfo(String userId, CareerInfoRequestDto careerInfoRequestDto) {
+        try {
+            log.info("updateCareerInfo :: userid: {} :: ENTER", userId);
+            Optional<UserInfoModel> existingUserOptional = userInfoRepository.findById(userId);
+            if (existingUserOptional.isEmpty()) {
+                log.warn("updateCareerInfo :: userid: {} :: NOT FOUND", userId);
+                throw new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId));
+            }
+            UserInfoModel existingUser = existingUserOptional.get();
+            updateCareerInfo(careerInfoRequestDto, existingUser);
+
+            UserInfoModel updatedModel = userInfoRepository.save(existingUser);
+            log.info("updateCareerInfo :: userid: {} :: DONE", userId);
+
+            return modelMapper.map(updatedModel.getCareerInfo(), CareerInfoResponseDto.class);
+        } catch (MappingException e) {
+            log.error("updateCareerInfo :: mapping request to model :: MappingException occurred", e);
+            throw new IncorrectRequestDataException(INCORRECT_REQUEST_DATA);
+        }
+    }
+
+    public Map<String, String> updateSocialLinks(String userId, Map<String, String> socialLinks) {
+        log.info("updateSocialLinks :: userid: {} :: ENTER", userId);
+        Optional<UserInfoModel> existingUserOptional = userInfoRepository.findById(userId);
+        if (existingUserOptional.isEmpty()) {
+            log.warn("updateSocialLinks :: userid: {} :: NOT FOUND", userId);
+            throw new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId));
+        }
+        UserInfoModel existingUser = existingUserOptional.get();
+        existingUser.setLinks(socialLinks);
+
+        UserInfoModel updatedModel = userInfoRepository.save(existingUser);
+        log.info("updateSocialLinks :: userid: {} :: DONE", userId);
+
+        return updatedModel.getLinks();
     }
 
     public String deactivateUserProfile(String userId) {
@@ -201,16 +261,14 @@ public class UserProfileService {
         targetModel.setDefaultFiles(defaultFiles);
     }
 
-    private UserInfoModel updatePersonalInfo(PersonalInfoRequestDto personalInfoRequestDto, UserInfoModel targetModel) {
+    private void updatePersonalInfo(PersonalInfoRequestDto personalInfoRequestDto, UserInfoModel targetModel) {
         PersonalInfo personalInfo = modelMapper.map(personalInfoRequestDto, PersonalInfo.class);
         targetModel.setPersonalInfo(personalInfo);
-        return targetModel;
     }
 
-    private UserInfoModel updateCareerInfo(CareerInfoRequestDto careerInfoRequestDto, UserInfoModel targetModel) {
+    private void updateCareerInfo(CareerInfoRequestDto careerInfoRequestDto, UserInfoModel targetModel) {
         CareerInfo careerInfo = modelMapper.map(careerInfoRequestDto, CareerInfo.class);
         targetModel.setCareerInfo(careerInfo);
-        return targetModel;
     }
 
     private void deactivateUser(UserInfoModel targetModel) {

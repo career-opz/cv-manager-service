@@ -1,5 +1,6 @@
 package dev.careeropz.cvmanagerservice.service;
 
+import dev.careeropz.cvmanagerservice.dto.jobprofile.commondto.JobProfileProgressStepDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.requestdto.JobProfileRequestDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto.JobProfileResponseDto;
 import dev.careeropz.cvmanagerservice.exception.DbOperationFailedException;
@@ -16,11 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static dev.careeropz.cvmanagerservice.MessageConstents.ExceptionConstants.*;
+import static dev.careeropz.cvmanagerservice.constant.ExceptionConstants.*;
 
 @Service
 @Slf4j
@@ -108,14 +108,32 @@ public class JobProfileService {
         }
     }
 
+    public JobProfileResponseDto updateJobProfileProgressStep(String userid, String jobProfileId, JobProfileProgressStepDto jobProfileProgressStepDto) {
+        try {
+            log.info("JobProfileService::updateJobProfileProgressStep Updating job profile progress step for job profile id: {} ::ENTER", jobProfileId);
+            JobProfileModel jobProfileModel = jobProfileRepository.findById(jobProfileId)
+                    .orElseThrow(() -> new ResourceNotFoundException(String.format("%s :%s", JOB_PROFILE_NOT_FOUND, jobProfileId)));
+            JobProfileProgressStep jobProfileProgressStep = modelMapper.map(jobProfileProgressStepDto, JobProfileProgressStep.class);
+            jobProfileModel.getProgress().add(jobProfileProgressStep);
+            JobProfileModel savedModel = jobProfileRepository.save(jobProfileModel);
+            log.info("JobProfileService::updateJobProfileProgressStep Updating job profile progress step for job profile id: {} ::DONE", jobProfileId);
+            return modelMapper.map(savedModel, JobProfileResponseDto.class);
+        } catch (MappingException e) {
+            log.error("JobProfileService::updateJobProfileProgressStep Error occurred while mapping request to model", e);
+            throw new IncorrectRequestDataException(INCORRECT_REQUEST_DATA);
+        }
+    }
+
     private void addJobProfileToResponseMapper() {
         TypeMap<JobProfileModel, JobProfileResponseDto> jobProfileModelToResponseMapper = this.modelMapper.createTypeMap(JobProfileModel.class, JobProfileResponseDto.class);
         Condition<Collection<JobProfileProgressStep>, String> hasProgress = context -> context.getSource() != null && !context.getSource().isEmpty();
         Converter<Collection<JobProfileProgressStep>, String> lastProgressTitleConverter = context -> ((JobProfileProgressStep)context.getSource().toArray()[context.getSource().size() - 1]).getTitle();
+        Converter<JobProfileModel, Boolean> isInHomeCountryConverter = (context -> context.getSource().getUserRef().getPersonalInfo().getCountry().getPhone().equals(context.getSource().getBasicInfo().getCountry().getPhone()));
         jobProfileModelToResponseMapper
                 .addMappings(mapper -> mapper.map(src -> src.getUserRef().getId(), JobProfileResponseDto::setUserRef))
                 .addMappings(mapper -> mapper.when(hasProgress).using(lastProgressTitleConverter)
-                        .map(JobProfileModel::getProgress, (dest, value) -> dest.getBasicInfo().setNote((String)value)));
-
+                        .map(JobProfileModel::getProgress, (dest, value) -> dest.getBasicInfo().setNote((String)value)))
+                .addMappings(mapper -> mapper.using(isInHomeCountryConverter)
+                        .map(src -> src, (dest, value) -> dest.getBasicInfo().setInHomeCountry((value != null) && (Boolean)value)));
     }
 }

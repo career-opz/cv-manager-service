@@ -1,8 +1,12 @@
 package dev.careeropz.cvmanagerservice.controller.userprofile;
 
+import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.CareerInfoRequestDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.DefaultFilesRequestDto;
+import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.PersonalInfoRequestDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.UserInfoRequestDto;
+import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.CareerInfoResponseDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.DefaultFilesResponseDto;
+import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.PersonalInfoResponseDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.UserInfoResponseDto;
 import dev.careeropz.cvmanagerservice.service.UserProfileService;
 import jakarta.validation.Valid;
@@ -10,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -57,6 +63,33 @@ public class UserProfileController {
         DefaultFilesResponseDto defaultFilesResponseDto = userProfileService.updateUserDefaultDocs(userid, defaultFilesRequestDto);
         log.info("updateUserDefaultDocs :: userid: {} :: DONE", userid);
         return ResponseEntity.ok(defaultFilesResponseDto);
+    }
+
+    @PutMapping("/{userid}/user-info")
+    public ResponseEntity<PersonalInfoResponseDto> updatePersonalInfo(@PathVariable("userid") String userid,
+                                                              @RequestBody @Valid PersonalInfoRequestDto personalInfoRequestDto){
+        log.info("updateUserInfo :: userid: {} :: ENTER", userid);
+        PersonalInfoResponseDto personalInfo = userProfileService.updatePersonalInfo(userid, personalInfoRequestDto);
+        log.info("updateUserInfo :: userid: {} :: DONE", userid);
+        return ResponseEntity.ok(personalInfo);
+    }
+
+    @PutMapping("/{userid}/career-info")
+    public ResponseEntity<CareerInfoResponseDto> updateCareerInfo(@PathVariable("userid") String userid,
+                                                                  @RequestBody @Valid CareerInfoRequestDto careerInfoRequestDto){
+        log.info("updateCareerInfo :: userid: {} :: ENTER", userid);
+        CareerInfoResponseDto careerInfoResponseDto = userProfileService.updateCareerInfo(userid, careerInfoRequestDto);
+        log.info("updateCareerInfo :: userid: {} :: DONE", userid);
+        return ResponseEntity.ok(careerInfoResponseDto);
+    }
+
+    @PutMapping("/{userid}/social-links")
+    public ResponseEntity<Map<String, String>> updateSocialLinks(@PathVariable("userid") String userid,
+                                                                 @RequestBody Map<String, String> socialLinks){
+        log.info("updateSocialLinks :: userid: {} :: ENTER", userid);
+        Map<String, String> updatedSocialLinks = userProfileService.updateSocialLinks(userid, socialLinks);
+        log.info("updateSocialLinks :: userid: {} :: DONE", userid);
+        return ResponseEntity.ok(updatedSocialLinks);
     }
 
     @PutMapping("{userid}/deactivate")

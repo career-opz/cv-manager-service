@@ -21,4 +21,5 @@ public class BasicInfoResponseDto {
     private JobProfileStatus status;
     private LocalDate appliedDate;
     private String note;
+    private boolean isInHomeCountry;
 }

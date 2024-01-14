@@ -1,5 +1,6 @@
 package dev.careeropz.cvmanagerservice.controller.jobprofiles;
 
+import dev.careeropz.cvmanagerservice.dto.jobprofile.commondto.JobProfileProgressStepDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.requestdto.JobProfileRequestDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto.JobProfileResponseDto;
 import dev.careeropz.cvmanagerservice.service.JobProfileService;
@@ -60,5 +61,16 @@ public class JobProfilesController {
         log.info("JobProfilesController::deleteJobProfileById Deleting job profile for job profile id: {} ::ENTER", jobProfileId);
         jobProfileService.deleteJobProfile(userId, jobProfileId);
         return ResponseEntity.ok("Job profile deleted successfully");
+    }
+
+    // put for job profile progress step
+    @PutMapping("/{job-profile-id}/progress-step")
+    public ResponseEntity<JobProfileResponseDto> updateJobProfileProgressStep(@PathVariable("userid") String userId,
+                                                                              @PathVariable("job-profile-id") String jobProfileId,
+                                                                              @RequestBody @Valid JobProfileProgressStepDto jobProfileProgressStepDto) {
+        log.info("JobProfilesController::updateJobProfileProgressStep Updating job profile progress step for job profile id: {} ::ENTER", jobProfileId);
+        JobProfileResponseDto jobProfileResponseDto = jobProfileService.updateJobProfileProgressStep(userId, jobProfileId, jobProfileProgressStepDto);
+        log.info("JobProfilesController::updateJobProfileProgressStep Updating job profile progress step for job profile id: {} ::DONE", jobProfileId);
+        return ResponseEntity.ok(jobProfileResponseDto);
     }
 }
