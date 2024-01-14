@@ -3,6 +3,7 @@ package dev.careeropz.cvmanagerservice.service;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.commondto.JobProfileProgressStepDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.requestdto.JobProfileRequestDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto.JobProfileResponseDto;
+import dev.careeropz.cvmanagerservice.dto.pagination.CommonPaginationRequest;
 import dev.careeropz.cvmanagerservice.exception.DbOperationFailedException;
 import dev.careeropz.cvmanagerservice.exception.IncorrectRequestDataException;
 import dev.careeropz.cvmanagerservice.exception.ResourceNotFoundException;
@@ -13,6 +14,8 @@ import dev.careeropz.cvmanagerservice.repository.JobProfileRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.modelmapper.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,9 +41,10 @@ public class JobProfileService {
         addJobProfileToResponseMapper();
     }
 
-    public List<JobProfileResponseDto> getAllJobProfiles(String userId) {
+    public List<JobProfileResponseDto> getAllJobProfiles(String userId, CommonPaginationRequest paginationRequest) {
         log.info("JobProfileService::getAllJobProfiles Fetching all job profiles for user id: {} ::ENTER", userId);
-        return jobProfileRepository.findByUserRef(new ObjectId(userId))
+        Pageable pageable = PageRequest.of(paginationRequest.getPageNo(), paginationRequest.getPageSize());
+        return jobProfileRepository.findByUserRef(new ObjectId(userId), pageable)
                 .map(jobProfileModelList -> {
                     log.info("JobProfileService::getAllJobProfiles Fetching all job profiles for user id: {} ::DONE", userId);
                     return jobProfileModelList
