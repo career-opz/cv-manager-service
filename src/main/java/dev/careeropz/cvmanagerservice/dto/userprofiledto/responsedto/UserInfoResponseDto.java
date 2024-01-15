@@ -1,5 +1,6 @@
 package dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto;
 
+import dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto.LinksDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,13 +13,13 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserInfoResponseDto {
-    String id;
-    PersonalInfoResponseDto personalInfo;
-    CareerInfoResponseDto careerInfo;
-    DefaultFilesResponseDto defaultFiles;
-    FileDataResponseDto profilePicture;
-    Map<String, String> links;
-    Date accountCreatedOn;
-    Date lastLoginOn;
-    List<String> jobProfiles;
+    private String id;
+    private PersonalInfoResponseDto personalInfo;
+    private CareerInfoResponseDto careerInfo;
+    private DefaultFilesResponseDto defaultFiles;
+    private FileDataResponseDto profilePicture;
+    private LinksDto links;
+    private Date accountCreatedOn;
+    private Date lastLoginOn;
+    private List<String> jobProfiles;
 }

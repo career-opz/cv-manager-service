@@ -1,5 +1,6 @@
 package dev.careeropz.cvmanagerservice.service;
 
+import dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto.LinksDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.CareerInfoRequestDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.DefaultFilesRequestDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.PersonalInfoRequestDto;
@@ -14,6 +15,7 @@ import dev.careeropz.cvmanagerservice.model.UserInfoModel;
 import dev.careeropz.cvmanagerservice.model.jobprofilemodel.JobProfileModel;
 import dev.careeropz.cvmanagerservice.model.subclasses.CareerInfo;
 import dev.careeropz.cvmanagerservice.model.subclasses.DefaultFiles;
+import dev.careeropz.cvmanagerservice.model.subclasses.Links;
 import dev.careeropz.cvmanagerservice.model.subclasses.PersonalInfo;
 import dev.careeropz.cvmanagerservice.repository.UserInfoRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -155,7 +157,7 @@ public class UserProfileService {
         }
     }
 
-    public Map<String, String> updateSocialLinks(String userId, Map<String, String> socialLinks) {
+    public LinksDto updateSocialLinks(String userId, LinksDto linksDto) {
         log.info("updateSocialLinks :: userid: {} :: ENTER", userId);
         Optional<UserInfoModel> existingUserOptional = userInfoRepository.findById(userId);
         if (existingUserOptional.isEmpty()) {
@@ -163,12 +165,13 @@ public class UserProfileService {
             throw new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId));
         }
         UserInfoModel existingUser = existingUserOptional.get();
-        existingUser.setLinks(socialLinks);
+        Links updatesLinks = modelMapper.map(linksDto, Links.class);
+        existingUser.setLinks(updatesLinks);
 
         UserInfoModel updatedModel = userInfoRepository.save(existingUser);
         log.info("updateSocialLinks :: userid: {} :: DONE", userId);
 
-        return updatedModel.getLinks();
+        return modelMapper.map(updatedModel.getLinks(), LinksDto.class);
     }
 
     public String deactivateUserProfile(String userId) {

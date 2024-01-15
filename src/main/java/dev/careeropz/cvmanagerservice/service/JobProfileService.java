@@ -1,13 +1,16 @@
 package dev.careeropz.cvmanagerservice.service;
 
 import dev.careeropz.cvmanagerservice.dto.jobprofile.commondto.JobProfileProgressStepDto;
+import dev.careeropz.cvmanagerservice.dto.jobprofile.requestdto.BasicInfoRequestDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.requestdto.JobProfileRequestDto;
+import dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto.BasicInfoResponseDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto.JobProfileResponseDto;
 import dev.careeropz.cvmanagerservice.dto.pagination.CommonPaginationRequest;
 import dev.careeropz.cvmanagerservice.exception.DbOperationFailedException;
 import dev.careeropz.cvmanagerservice.exception.IncorrectRequestDataException;
 import dev.careeropz.cvmanagerservice.exception.ResourceNotFoundException;
 import dev.careeropz.cvmanagerservice.model.UserInfoModel;
+import dev.careeropz.cvmanagerservice.model.jobprofilemodel.BasicInfo;
 import dev.careeropz.cvmanagerservice.model.jobprofilemodel.JobProfileModel;
 import dev.careeropz.cvmanagerservice.model.jobprofilemodel.JobProfileProgressStep;
 import dev.careeropz.cvmanagerservice.repository.JobProfileRepository;
@@ -124,6 +127,22 @@ public class JobProfileService {
             return modelMapper.map(savedModel, JobProfileResponseDto.class);
         } catch (MappingException e) {
             log.error("JobProfileService::updateJobProfileProgressStep Error occurred while mapping request to model", e);
+            throw new IncorrectRequestDataException(INCORRECT_REQUEST_DATA);
+        }
+    }
+
+    public BasicInfoResponseDto updateJobProfileBasicInfo(String userid, String jobProfileId, BasicInfoRequestDto basicInfoRequestDto) {
+        try {
+            log.info("JobProfileService::updateJobProfileBasicInfo Updating job profile basic info for job profile id: {} ::ENTER", jobProfileId);
+            JobProfileModel jobProfileModel = jobProfileRepository.findById(jobProfileId)
+                    .orElseThrow(() -> new ResourceNotFoundException(String.format("%s :%s", JOB_PROFILE_NOT_FOUND, jobProfileId)));
+            BasicInfo basicInfo = modelMapper.map(basicInfoRequestDto, BasicInfo.class);
+            jobProfileModel.setBasicInfo(basicInfo);
+            JobProfileModel savedModel = jobProfileRepository.save(jobProfileModel);
+            log.info("JobProfileService::updateJobProfileBasicInfo Updating job profile basic info for job profile id: {} ::DONE", jobProfileId);
+            return modelMapper.map(savedModel.getBasicInfo(), BasicInfoResponseDto.class);
+        } catch (MappingException e) {
+            log.error("JobProfileService::updateJobProfileBasicInfo Error occurred while mapping request to model", e);
             throw new IncorrectRequestDataException(INCORRECT_REQUEST_DATA);
         }
     }

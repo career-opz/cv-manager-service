@@ -1,7 +1,9 @@
 package dev.careeropz.cvmanagerservice.controller.jobprofiles;
 
 import dev.careeropz.cvmanagerservice.dto.jobprofile.commondto.JobProfileProgressStepDto;
+import dev.careeropz.cvmanagerservice.dto.jobprofile.requestdto.BasicInfoRequestDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.requestdto.JobProfileRequestDto;
+import dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto.BasicInfoResponseDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto.JobProfileResponseDto;
 import dev.careeropz.cvmanagerservice.dto.pagination.CommonPaginationRequest;
 import dev.careeropz.cvmanagerservice.service.JobProfileService;
@@ -69,7 +71,6 @@ public class JobProfilesController {
         return ResponseEntity.ok("Job profile deleted successfully");
     }
 
-    // put for job profile progress step
     @PutMapping("/{job-profile-id}/progress-step")
     public ResponseEntity<JobProfileResponseDto> updateJobProfileProgressStep(@PathVariable("userid") String userId,
                                                                               @PathVariable("job-profile-id") String jobProfileId,
@@ -78,5 +79,15 @@ public class JobProfilesController {
         JobProfileResponseDto jobProfileResponseDto = jobProfileService.updateJobProfileProgressStep(userId, jobProfileId, jobProfileProgressStepDto);
         log.info("JobProfilesController::updateJobProfileProgressStep Updating job profile progress step for job profile id: {} ::DONE", jobProfileId);
         return ResponseEntity.ok(jobProfileResponseDto);
+    }
+
+    @PutMapping("/{job-profile-id}/basic-info")
+    public ResponseEntity<BasicInfoResponseDto> updateJobProfileBasicInfo(@PathVariable("userid") String userId,
+                                                                           @PathVariable("job-profile-id") String jobProfileId,
+                                                                           @RequestBody @Valid BasicInfoRequestDto basicInfoRequestDto) {
+        log.info("JobProfilesController::updateJobProfileBasicInfo Updating job profile basic info for job profile id: {} ::ENTER", jobProfileId);
+        BasicInfoResponseDto basicInfoResponseDto = jobProfileService.updateJobProfileBasicInfo(userId, jobProfileId, basicInfoRequestDto);
+        log.info("JobProfilesController::updateJobProfileBasicInfo Updating job profile basic info for job profile id: {} ::DONE", jobProfileId);
+        return ResponseEntity.ok(basicInfoResponseDto);
     }
 }

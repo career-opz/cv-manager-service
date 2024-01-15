@@ -1,5 +1,6 @@
 package dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto;
 
+import dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto.LinksDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Past;
 import lombok.AllArgsConstructor;
@@ -13,11 +14,11 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserInfoRequestDto{
-        @Valid PersonalInfoRequestDto personalInfo;
-        @Valid CareerInfoRequestDto careerInfo;
-        @Valid DefaultFilesRequestDto defaultFiles;
-        @Valid FileDataRequestDto profilePicture;
-        Map<String, String> links;
-        @Past Date accountCreatedOn;
-        Date lastLoginOn;
+        @Valid private PersonalInfoRequestDto personalInfo;
+        @Valid private CareerInfoRequestDto careerInfo;
+        @Valid private DefaultFilesRequestDto defaultFiles;
+        @Valid private FileDataRequestDto profilePicture;
+        @Valid private LinksDto links;
+        @Past private Date accountCreatedOn;
+        @Past private Date lastLoginOn;
 }
