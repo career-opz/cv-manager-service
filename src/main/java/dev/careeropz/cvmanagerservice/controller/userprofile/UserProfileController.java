@@ -65,7 +65,7 @@ public class UserProfileController {
         return ResponseEntity.ok(defaultFilesResponseDto);
     }
 
-    @PutMapping("/{userid}/user-info")
+    @PutMapping("/{userid}/personal-info")
     public ResponseEntity<PersonalInfoResponseDto> updatePersonalInfo(@PathVariable("userid") String userid,
                                                               @RequestBody @Valid PersonalInfoRequestDto personalInfoRequestDto){
         log.info("updateUserInfo :: userid: {} :: ENTER", userid);

@@ -8,9 +8,9 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public enum JobProfileModelStatus {
-    Pending,
-    Success,
-    Processing,
-    Rejected,
-    Abundant
+    PENDING,
+    SUCCESS,
+    PROCESSING,
+    REJECTED,
+    ABUNDANT
 }
