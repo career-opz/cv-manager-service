@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static dev.careeropz.cvmanagerservice.constant.ExceptionConstants.*;
@@ -71,7 +72,7 @@ public class JobProfileService {
     @Transactional
     public JobProfileResponseDto createJobProfile(String userid, JobProfileRequestDto jobProfileRequestDto) {
 
-        try{
+        try {
             log.info("JobProfileService::createJobProfile Creating a new job profile ::ENTER");
             UserInfoModel userInfoModel = userProfileService.getUserInfoModel(userid);
             JobProfileModel jobProfileModel = modelMapper.map(jobProfileRequestDto, JobProfileModel.class);
@@ -104,7 +105,7 @@ public class JobProfileService {
     }
 
     public void deleteJobProfile(String userid, String jobProfileId) {
-        try{
+        try {
             log.info("JobProfileService::deleteJobProfile Deleting job profile for job profile id: {} ::ENTER", jobProfileId);
             userProfileService.removeJobProfileFromUserProfile(userid, jobProfileId);
             jobProfileRepository.deleteById(jobProfileId);
@@ -150,13 +151,27 @@ public class JobProfileService {
     private void addJobProfileToResponseMapper() {
         TypeMap<JobProfileModel, JobProfileResponseDto> jobProfileModelToResponseMapper = this.modelMapper.createTypeMap(JobProfileModel.class, JobProfileResponseDto.class);
         Condition<Collection<JobProfileProgressStep>, String> hasProgress = context -> context.getSource() != null && !context.getSource().isEmpty();
-        Converter<Collection<JobProfileProgressStep>, String> lastProgressTitleConverter = context -> ((JobProfileProgressStep)context.getSource().toArray()[context.getSource().size() - 1]).getTitle();
+        Converter<Collection<JobProfileProgressStep>, String> lastProgressTitleConverter = context -> ((JobProfileProgressStep) context.getSource().toArray()[context.getSource().size() - 1]).getTitle();
+        Converter<Collection<JobProfileProgressStep>, Collection<JobProfileProgressStepDto>> progressStepConverter = context -> {
+            AtomicInteger count = new AtomicInteger(1);
+            return context.getSource().
+                    stream()
+                    .map(jobProfileProgressStep -> {
+                        JobProfileProgressStepDto jobProfileProgressStepDto = modelMapper.map(jobProfileProgressStep, JobProfileProgressStepDto.class);
+                        jobProfileProgressStepDto.setId(count.getAndIncrement());
+                        return jobProfileProgressStepDto;
+                    })
+                    .toList();
+        };
+
         Converter<JobProfileModel, Boolean> isInHomeCountryConverter = (context -> context.getSource().getUserRef().getPersonalInfo().getCountry().getPhone().equals(context.getSource().getBasicInfo().getCountry().getPhone()));
         jobProfileModelToResponseMapper
                 .addMappings(mapper -> mapper.map(src -> src.getUserRef().getId(), JobProfileResponseDto::setUserRef))
                 .addMappings(mapper -> mapper.when(hasProgress).using(lastProgressTitleConverter)
-                        .map(JobProfileModel::getProgress, (dest, value) -> dest.getBasicInfo().setNote((String)value)))
+                        .map(JobProfileModel::getProgress, (dest, value) -> dest.getBasicInfo().setNote((String) value)))
                 .addMappings(mapper -> mapper.using(isInHomeCountryConverter)
-                        .map(src -> src, (dest, value) -> dest.getBasicInfo().setInHomeCountry((value != null) && (Boolean)value)));
+                        .map(src -> src, (dest, value) -> dest.getBasicInfo().setInHomeCountry((value != null) && (Boolean) value)))
+                .addMappings(mapper -> mapper.when(hasProgress).using(progressStepConverter)
+                        .map(JobProfileModel::getProgress, JobProfileResponseDto::setProgress));
     }
 }
