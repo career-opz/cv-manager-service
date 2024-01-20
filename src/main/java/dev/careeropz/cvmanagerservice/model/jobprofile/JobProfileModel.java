@@ -12,7 +12,7 @@ import java.util.List;
 @Document(collection = "job-profile")
 public class JobProfileModel {
     @Id
-    private String id;
+    private String jobProfileId;
 
     @DocumentReference(lazy = true)
     private UserInfoModel userRef;

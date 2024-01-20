@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JobProfileResponseDto {
-    private String id;
+    private String jobProfileId;
     private String userRef;
 
     private BasicInfoResponseDto basicInfo;

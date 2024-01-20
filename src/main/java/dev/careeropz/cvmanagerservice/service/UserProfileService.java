@@ -252,7 +252,7 @@ public class UserProfileService {
             throw new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId));
         }
         UserInfoModel existingUser = existingUserOptional.get();
-        existingUser.getJobProfiles().removeIf(jobProfileModel -> jobProfileModel.getId().equals(jobProfileId));
+        existingUser.getJobProfiles().removeIf(jobProfileModel -> jobProfileModel.getJobProfileId().equals(jobProfileId));
 
         userInfoRepository.save(existingUser);
         log.info("removeJobProfileFromUserProfile :: userid: {} :: DONE", userId);
@@ -285,7 +285,7 @@ public class UserProfileService {
         Condition<Collection<JobProfileModel>, Collection<String>> hasJobProfile = ctx -> ctx.getSource() != null && !ctx.getSource().isEmpty();
         Converter<Collection<JobProfileModel>, Collection<String>> jobProfileConverter = ctx -> ctx.getSource()
                 .stream()
-                .map(JobProfileModel::getId)
+                .map(JobProfileModel::getJobProfileId)
                 .toList();
         modelMapper.typeMap(UserInfoModel.class, UserInfoResponseDto.class)
                 .addMappings(mapper -> mapper.when(hasJobProfile).using(jobProfileConverter)

@@ -10,7 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FileData {
-    private String id;
+    private String fileId;
     private String name;
     private Date dateUploaded;
 }

@@ -26,8 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static dev.careeropz.cvmanagerservice.constant.ExceptionConstants.*;
 
@@ -91,7 +89,7 @@ public class JobProfileService {
             UserInfoModel userInfoModel = userProfileService.getUserInfoModel(userid);
             JobProfileModel jobProfileModel = modelMapper.map(jobProfileRequestDto, JobProfileModel.class);
             jobProfileModel.setUserRef(userInfoModel);
-            jobProfileModel.setId(jobProfileId);
+            jobProfileModel.setJobProfileId(jobProfileId);
             JobProfileModel savedModel = jobProfileRepository.save(jobProfileModel);
             log.info("JobProfileService::updateJobProfile Updating job profile for job profile id: {} ::DONE", jobProfileId);
             return modelMapper.map(savedModel, JobProfileResponseDto.class);
@@ -155,7 +153,7 @@ public class JobProfileService {
                     stream()
                     .map(jobProfileProgressStep -> {
                         JobProfileProgressStepDto jobProfileProgressStepDto = modelMapper.map(jobProfileProgressStep, JobProfileProgressStepDto.class);
-                        jobProfileProgressStepDto.setId(count.getAndIncrement());
+                        jobProfileProgressStepDto.setProgressStepId(count.getAndIncrement());
                         return jobProfileProgressStepDto;
                     })
                     .toList();

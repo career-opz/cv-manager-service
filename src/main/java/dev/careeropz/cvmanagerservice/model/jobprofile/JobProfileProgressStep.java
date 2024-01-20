@@ -10,6 +10,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JobProfileProgressStep {
+    private Integer progressStepId;
     private String title;
     private String description;
     private Date date;
