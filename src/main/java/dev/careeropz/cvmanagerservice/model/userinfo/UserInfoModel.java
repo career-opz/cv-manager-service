@@ -1,7 +1,7 @@
-package dev.careeropz.cvmanagerservice.model;
+package dev.careeropz.cvmanagerservice.model.userinfo;
 
-import dev.careeropz.cvmanagerservice.model.jobprofilemodel.JobProfileModel;
-import dev.careeropz.cvmanagerservice.model.subclasses.*;
+import dev.careeropz.cvmanagerservice.model.jobprofile.JobProfileModel;
+import dev.careeropz.cvmanagerservice.model.userinfo.subclasses.*;
 import lombok.Data;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Data
 @Document(collection = "user-info")

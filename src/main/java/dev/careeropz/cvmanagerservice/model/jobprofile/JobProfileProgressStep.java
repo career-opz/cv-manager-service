@@ -1,4 +1,4 @@
-package dev.careeropz.cvmanagerservice.model.jobprofilemodel;
+package dev.careeropz.cvmanagerservice.model.jobprofile;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

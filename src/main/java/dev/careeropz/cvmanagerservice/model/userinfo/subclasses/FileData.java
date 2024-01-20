@@ -1,4 +1,4 @@
-package dev.careeropz.cvmanagerservice.model.subclasses;
+package dev.careeropz.cvmanagerservice.model.userinfo.subclasses;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -9,14 +9,15 @@ import dev.careeropz.cvmanagerservice.dto.pagination.CommonPaginationRequest;
 import dev.careeropz.cvmanagerservice.exception.DbOperationFailedException;
 import dev.careeropz.cvmanagerservice.exception.IncorrectRequestDataException;
 import dev.careeropz.cvmanagerservice.exception.ResourceNotFoundException;
-import dev.careeropz.cvmanagerservice.model.UserInfoModel;
-import dev.careeropz.cvmanagerservice.model.jobprofilemodel.BasicInfo;
-import dev.careeropz.cvmanagerservice.model.jobprofilemodel.JobProfileModel;
-import dev.careeropz.cvmanagerservice.model.jobprofilemodel.JobProfileProgressStep;
+import dev.careeropz.cvmanagerservice.model.userinfo.UserInfoModel;
+import dev.careeropz.cvmanagerservice.model.jobprofile.BasicInfo;
+import dev.careeropz.cvmanagerservice.model.jobprofile.JobProfileModel;
+import dev.careeropz.cvmanagerservice.model.jobprofile.JobProfileProgressStep;
 import dev.careeropz.cvmanagerservice.repository.JobProfileRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.modelmapper.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static dev.careeropz.cvmanagerservice.constant.ExceptionConstants.*;
@@ -43,20 +45,15 @@ public class JobProfileService {
 
         // configuring custom mappers
         addJobProfileToResponseMapper();
+        addPageToPageResponseMapper();
     }
 
-    public List<JobProfileResponseDto> getAllJobProfiles(String userId, CommonPaginationRequest paginationRequest) {
+    public PageResponse<JobProfileResponseDto> getAllJobProfiles(String userId, CommonPaginationRequest paginationRequest) {
         log.info("JobProfileService::getAllJobProfiles Fetching all job profiles for user id: {} ::ENTER", userId);
         Pageable pageable = PageRequest.of(paginationRequest.getPageNo(), paginationRequest.getPageSize());
-        return jobProfileRepository.findByUserRef(new ObjectId(userId), pageable)
-                .map(jobProfileModelList -> {
-                    log.info("JobProfileService::getAllJobProfiles Fetching all job profiles for user id: {} ::DONE", userId);
-                    return jobProfileModelList
-                            .stream()
-                            .map(jobProfileModel -> modelMapper.map(jobProfileModel, JobProfileResponseDto.class))
-                            .collect(Collectors.toList());
-                })
+        Page<JobProfileModel> response = jobProfileRepository.findByUserRef(new ObjectId(userId), pageable)
                 .orElseThrow(() -> new DbOperationFailedException(String.format("%s :%s", DB_OPERATION_FAILED, userId)));
+        return pageToResponsePage(response);
     }
 
     public JobProfileResponseDto getJobProfile(String jobProfileId) {
@@ -173,5 +170,31 @@ public class JobProfileService {
                         .map(src -> src, (dest, value) -> dest.getBasicInfo().setInHomeCountry((value != null) && (Boolean) value)))
                 .addMappings(mapper -> mapper.when(hasProgress).using(progressStepConverter)
                         .map(JobProfileModel::getProgress, JobProfileResponseDto::setProgress));
+    }
+
+    private void addPageToPageResponseMapper(){
+        TypeMap<Page, PageResponse> jobProfilePageToResponsePageMapper = this.modelMapper.createTypeMap(Page.class, PageResponse.class);
+        jobProfilePageToResponsePageMapper
+                .addMappings(mapper -> mapper.map(Page::getTotalPages, (dest, value) -> dest.setTotalPages((Integer) value)))
+                .addMappings(mapper -> mapper.map(Page::getTotalElements, (dest, value) -> dest.setTotalCount((Long) value)))
+                .addMappings(mapper -> mapper.map(Page::getNumber, (dest, value) -> dest.setPageNumber((Integer) value)))
+                .addMappings(mapper -> mapper.map(Page::getSize, (dest, value) -> dest.setPageSize((Integer) value)))
+                .addMappings(mapper -> mapper.map(Page::getContent, (dest, value) -> dest.setContent((List)value)))
+                .addMappings(mapper -> mapper.map(Page::hasPrevious, (dest, value) -> dest.setHasPreviousPage((Boolean) value)))
+                .addMappings(mapper -> mapper.map(Page::hasNext, (dest, value) -> dest.setHasNextPage((Boolean) value)));
+    }
+
+    private PageResponse<JobProfileResponseDto> pageToResponsePage(Page<JobProfileModel> jobProfilePage){
+        PageResponse<JobProfileResponseDto> pageResponse = new PageResponse<>();
+        pageResponse.setTotalPages(jobProfilePage.getTotalPages());
+        pageResponse.setTotalCount(jobProfilePage.getTotalElements());
+        pageResponse.setPageNumber(jobProfilePage.getNumber() + 1);
+        pageResponse.setPageSize(jobProfilePage.getSize());
+        pageResponse.setContent(jobProfilePage.getContent().stream().map(jobProfileModel -> modelMapper.map(jobProfileModel, JobProfileResponseDto.class)).toList());
+        pageResponse.setHasPreviousPage(jobProfilePage.hasPrevious());
+        pageResponse.setHasNextPage(jobProfilePage.hasNext());
+        pageResponse.setStartIndex(((long) pageResponse.getPageSize() * (pageResponse.getPageNumber() - 1) + 1));
+        pageResponse.setEndIndex(pageResponse.getHasNextPage() ? pageResponse.getStartIndex() + pageResponse.getPageSize() - 1 : pageResponse.getTotalCount());
+        return pageResponse;
     }
 }

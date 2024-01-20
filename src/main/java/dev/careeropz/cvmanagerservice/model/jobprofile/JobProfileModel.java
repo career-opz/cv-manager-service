@@ -1,6 +1,6 @@
-package dev.careeropz.cvmanagerservice.model.jobprofilemodel;
+package dev.careeropz.cvmanagerservice.model.jobprofile;
 
-import dev.careeropz.cvmanagerservice.model.UserInfoModel;
+import dev.careeropz.cvmanagerservice.model.userinfo.UserInfoModel;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

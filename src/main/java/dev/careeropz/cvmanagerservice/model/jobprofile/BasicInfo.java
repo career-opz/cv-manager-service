@@ -1,7 +1,7 @@
-package dev.careeropz.cvmanagerservice.model.jobprofilemodel;
+package dev.careeropz.cvmanagerservice.model.jobprofile;
 
 import dev.careeropz.cvmanagerservice.model.constants.JobProfileModelStatus;
-import dev.careeropz.cvmanagerservice.model.subclasses.Country;
+import dev.careeropz.cvmanagerservice.model.userinfo.subclasses.Country;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

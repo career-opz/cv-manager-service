@@ -11,12 +11,12 @@ import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.PersonalInf
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.UserInfoResponseDto;
 import dev.careeropz.cvmanagerservice.exception.IncorrectRequestDataException;
 import dev.careeropz.cvmanagerservice.exception.ResourceNotFoundException;
-import dev.careeropz.cvmanagerservice.model.UserInfoModel;
-import dev.careeropz.cvmanagerservice.model.jobprofilemodel.JobProfileModel;
-import dev.careeropz.cvmanagerservice.model.subclasses.CareerInfo;
-import dev.careeropz.cvmanagerservice.model.subclasses.DefaultFiles;
-import dev.careeropz.cvmanagerservice.model.subclasses.Links;
-import dev.careeropz.cvmanagerservice.model.subclasses.PersonalInfo;
+import dev.careeropz.cvmanagerservice.model.userinfo.UserInfoModel;
+import dev.careeropz.cvmanagerservice.model.jobprofile.JobProfileModel;
+import dev.careeropz.cvmanagerservice.model.userinfo.subclasses.CareerInfo;
+import dev.careeropz.cvmanagerservice.model.userinfo.subclasses.DefaultFiles;
+import dev.careeropz.cvmanagerservice.model.userinfo.subclasses.Links;
+import dev.careeropz.cvmanagerservice.model.userinfo.subclasses.PersonalInfo;
 import dev.careeropz.cvmanagerservice.repository.UserInfoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.Condition;
@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 
 import static dev.careeropz.cvmanagerservice.constant.ExceptionConstants.*;

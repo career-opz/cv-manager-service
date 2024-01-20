@@ -1,4 +1,4 @@
-package dev.careeropz.cvmanagerservice.controller.jobprofiles;
+package dev.careeropz.cvmanagerservice.controller.jobprofile;
 
 import dev.careeropz.cvmanagerservice.dto.jobprofile.commondto.JobProfileProgressStepDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.requestdto.BasicInfoRequestDto;
@@ -7,9 +7,11 @@ import dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto.BasicInfoRespon
 import dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto.JobProfileResponseDto;
 import dev.careeropz.cvmanagerservice.dto.pagination.CommonPaginationRequest;
 import dev.careeropz.cvmanagerservice.service.JobProfileService;
+import dev.careeropz.cvmanagerservice.service.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,14 +25,14 @@ public class JobProfilesController {
     private final JobProfileService jobProfileService;
 
     @GetMapping
-    public ResponseEntity<List<JobProfileResponseDto>> getAllJobProfiles(@PathVariable("userid") String userId,
-                                                                         @RequestParam(value = "page-no", defaultValue = "0") int pageNo,
-                                                                         @RequestParam(value = "page-size", defaultValue = "10") int pageSize,
-                                                                         @RequestParam(value = "sort-by", defaultValue = "id") String sortBy,
-                                                                         @RequestParam(value = "sort-direction", defaultValue = "asc") String sortDirection) {
+    public ResponseEntity<PageResponse<JobProfileResponseDto>> getAllJobProfiles(@PathVariable("userid") String userId,
+                                                                                 @RequestParam(value = "page-no", defaultValue = "1") int pageNo,
+                                                                                 @RequestParam(value = "page-size", defaultValue = "10") int pageSize,
+                                                                                 @RequestParam(value = "sort-by", defaultValue = "id") String sortBy,
+                                                                                 @RequestParam(value = "sort-direction", defaultValue = "asc") String sortDirection) {
         log.info("JobProfilesController::getAllJobProfiles Fetching all job profiles for user id: {} ::ENTER", userId);
-        CommonPaginationRequest paginationRequest = new CommonPaginationRequest(pageNo, pageSize, sortBy, sortDirection);
-        List<JobProfileResponseDto> jobProfiles = jobProfileService.getAllJobProfiles(userId, paginationRequest);
+        CommonPaginationRequest paginationRequest = new CommonPaginationRequest(--pageNo, pageSize, sortBy, sortDirection);
+        PageResponse<JobProfileResponseDto> jobProfiles = jobProfileService.getAllJobProfiles(userId, paginationRequest);
         log.info("JobProfilesController::getAllJobProfiles Fetching all job profiles for user id: {} ::DONE", userId);
         return ResponseEntity.ok(jobProfiles);
     }
