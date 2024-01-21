@@ -21,7 +21,7 @@ public class SuggestionsService {
 
     public List<RelatedIndustryDto> getRelatedIndustrySuggestions(String userId) {
         log.info("getSuggestions :: userid: {} :: ENTER", userId);
-        List<RelatedIndustryModel> relatedIndustries = relatedIndustrySuggestionRepository.findByIsDefaultAndUserRef(true, new ObjectId(userId));
+        List<RelatedIndustryModel> relatedIndustries = relatedIndustrySuggestionRepository.findByIsDefaultAndUserId(true, new ObjectId(userId));
         log.info("getSuggestions :: userid: {} :: DONE", userId);
         return relatedIndustries
                 .stream()
@@ -32,7 +32,7 @@ public class SuggestionsService {
     public List<RelatedIndustryDto> addRelatedIndustrySuggestions(String userId, RelatedIndustryDto relatedIndustryDto) {
         log.info("addSuggestions :: userid: {} :: ENTER", userId);
         RelatedIndustryModel relatedIndustryModel = modelMapper.map(relatedIndustryDto, RelatedIndustryModel.class);
-        relatedIndustryModel.setUserRef(new ObjectId(userId));
+        relatedIndustryModel.setUserId(new ObjectId(userId));
         relatedIndustryModel.setIsDefault(false);
         relatedIndustrySuggestionRepository.save(relatedIndustryModel);
         List<RelatedIndustryDto> response = getRelatedIndustrySuggestions(userId);
@@ -42,7 +42,7 @@ public class SuggestionsService {
 
     public List<RelatedIndustryDto> deleteRelatedIndustrySuggestions(String userId, String suggestionId) {
         log.info("deleteSuggestions :: userid: {} :: ENTER", userId);
-        relatedIndustrySuggestionRepository.deleteById(suggestionId);
+        relatedIndustrySuggestionRepository.deleteByIndustryIdAndUserId(new ObjectId(suggestionId), new ObjectId(userId));
         List<RelatedIndustryDto> response = getRelatedIndustrySuggestions(userId);
         log.info("deleteSuggestions :: userid: {} :: DONE", userId);
         return response;

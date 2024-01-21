@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static dev.careeropz.cvmanagerservice.constant.ExceptionConstants.*;
@@ -44,7 +43,6 @@ public class JobProfileService {
 
         // configuring custom mappers
         addJobProfileToResponseMapper();
-//        addPageToPageResponseMapper();
     }
 
     public PageResponse<JobProfileResponseDto> getAllJobProfiles(String userId, CommonPaginationRequest paginationRequest) {
@@ -170,18 +168,6 @@ public class JobProfileService {
                 .addMappings(mapper -> mapper.when(hasProgress).using(progressStepConverter)
                         .map(JobProfileModel::getProgress, JobProfileResponseDto::setProgress));
     }
-
-//    private void addPageToPageResponseMapper(){
-//        TypeMap<Page, PageResponse> jobProfilePageToResponsePageMapper = this.modelMapper.createTypeMap(Page.class, PageResponse.class);
-//        jobProfilePageToResponsePageMapper
-//                .addMappings(mapper -> mapper.map(Page::getTotalPages, (dest, value) -> dest.setTotalPages((Integer) value)))
-//                .addMappings(mapper -> mapper.map(Page::getTotalElements, (dest, value) -> dest.setTotalCount((Long) value)))
-//                .addMappings(mapper -> mapper.map(Page::getNumber, (dest, value) -> dest.setPageNumber((Integer) value)))
-//                .addMappings(mapper -> mapper.map(Page::getSize, (dest, value) -> dest.setPageSize((Integer) value)))
-//                .addMappings(mapper -> mapper.map(Page::getContent, (dest, value) -> dest.setContent((List)value)))
-//                .addMappings(mapper -> mapper.map(Page::hasPrevious, (dest, value) -> dest.setHasPreviousPage((Boolean) value)))
-//                .addMappings(mapper -> mapper.map(Page::hasNext, (dest, value) -> dest.setHasNextPage((Boolean) value)));
-//    }
 
     private PageResponse<JobProfileResponseDto> pageToResponsePage(Page<JobProfileModel> jobProfilePage){
         PageResponse<JobProfileResponseDto> pageResponse = new PageResponse<>();

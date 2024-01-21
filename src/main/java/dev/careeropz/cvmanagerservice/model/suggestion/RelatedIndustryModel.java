@@ -19,5 +19,5 @@ public class RelatedIndustryModel {
     private String industry;
     private List<String> jobTitles;
     private Boolean isDefault;
-    private ObjectId userRef;
+    private ObjectId userId;
 }
