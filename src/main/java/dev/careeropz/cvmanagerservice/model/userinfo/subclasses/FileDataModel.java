@@ -1,4 +1,4 @@
-package dev.careeropz.cvmanagerservice.dto.jobprofile.commondto;
+package dev.careeropz.cvmanagerservice.model.userinfo.subclasses;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FileDataDto {
+public class FileDataModel {
     private String fileId;
     private String name;
     private Date dateUploaded;

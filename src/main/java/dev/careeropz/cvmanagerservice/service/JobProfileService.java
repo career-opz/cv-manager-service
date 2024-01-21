@@ -1,5 +1,6 @@
 package dev.careeropz.cvmanagerservice.service;
 
+import dev.careeropz.cvmanagerservice.dto.commondto.PageResponse;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.commondto.JobProfileProgressStepDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.requestdto.BasicInfoRequestDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.requestdto.JobProfileRequestDto;
@@ -10,9 +11,9 @@ import dev.careeropz.cvmanagerservice.exception.DbOperationFailedException;
 import dev.careeropz.cvmanagerservice.exception.IncorrectRequestDataException;
 import dev.careeropz.cvmanagerservice.exception.ResourceNotFoundException;
 import dev.careeropz.cvmanagerservice.model.userinfo.UserInfoModel;
-import dev.careeropz.cvmanagerservice.model.jobprofile.BasicInfo;
+import dev.careeropz.cvmanagerservice.model.jobprofile.BasicInfoModel;
 import dev.careeropz.cvmanagerservice.model.jobprofile.JobProfileModel;
-import dev.careeropz.cvmanagerservice.model.jobprofile.JobProfileProgressStep;
+import dev.careeropz.cvmanagerservice.model.jobprofile.JobProfileProgressStepModel;
 import dev.careeropz.cvmanagerservice.repository.JobProfileRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -43,7 +44,7 @@ public class JobProfileService {
 
         // configuring custom mappers
         addJobProfileToResponseMapper();
-        addPageToPageResponseMapper();
+//        addPageToPageResponseMapper();
     }
 
     public PageResponse<JobProfileResponseDto> getAllJobProfiles(String userId, CommonPaginationRequest paginationRequest) {
@@ -116,7 +117,7 @@ public class JobProfileService {
             log.info("JobProfileService::updateJobProfileProgressStep Updating job profile progress step for job profile id: {} ::ENTER", jobProfileId);
             JobProfileModel jobProfileModel = jobProfileRepository.findById(jobProfileId)
                     .orElseThrow(() -> new ResourceNotFoundException(String.format("%s :%s", JOB_PROFILE_NOT_FOUND, jobProfileId)));
-            JobProfileProgressStep jobProfileProgressStep = modelMapper.map(jobProfileProgressStepDto, JobProfileProgressStep.class);
+            JobProfileProgressStepModel jobProfileProgressStep = modelMapper.map(jobProfileProgressStepDto, JobProfileProgressStepModel.class);
             jobProfileModel.getProgress().add(jobProfileProgressStep);
             JobProfileModel savedModel = jobProfileRepository.save(jobProfileModel);
             log.info("JobProfileService::updateJobProfileProgressStep Updating job profile progress step for job profile id: {} ::DONE", jobProfileId);
@@ -132,8 +133,8 @@ public class JobProfileService {
             log.info("JobProfileService::updateJobProfileBasicInfo Updating job profile basic info for job profile id: {} ::ENTER", jobProfileId);
             JobProfileModel jobProfileModel = jobProfileRepository.findById(jobProfileId)
                     .orElseThrow(() -> new ResourceNotFoundException(String.format("%s :%s", JOB_PROFILE_NOT_FOUND, jobProfileId)));
-            BasicInfo basicInfo = modelMapper.map(basicInfoRequestDto, BasicInfo.class);
-            jobProfileModel.setBasicInfo(basicInfo);
+            BasicInfoModel basicInfoModel = modelMapper.map(basicInfoRequestDto, BasicInfoModel.class);
+            jobProfileModel.setBasicInfo(basicInfoModel);
             JobProfileModel savedModel = jobProfileRepository.save(jobProfileModel);
             log.info("JobProfileService::updateJobProfileBasicInfo Updating job profile basic info for job profile id: {} ::DONE", jobProfileId);
             return modelMapper.map(savedModel.getBasicInfo(), BasicInfoResponseDto.class);
@@ -145,9 +146,9 @@ public class JobProfileService {
 
     private void addJobProfileToResponseMapper() {
         TypeMap<JobProfileModel, JobProfileResponseDto> jobProfileModelToResponseMapper = this.modelMapper.createTypeMap(JobProfileModel.class, JobProfileResponseDto.class);
-        Condition<Collection<JobProfileProgressStep>, String> hasProgress = context -> context.getSource() != null && !context.getSource().isEmpty();
-        Converter<Collection<JobProfileProgressStep>, String> lastProgressTitleConverter = context -> ((JobProfileProgressStep) context.getSource().toArray()[context.getSource().size() - 1]).getTitle();
-        Converter<Collection<JobProfileProgressStep>, Collection<JobProfileProgressStepDto>> progressStepConverter = context -> {
+        Condition<Collection<JobProfileProgressStepModel>, String> hasProgress = context -> context.getSource() != null && !context.getSource().isEmpty();
+        Converter<Collection<JobProfileProgressStepModel>, String> lastProgressTitleConverter = context -> ((JobProfileProgressStepModel) context.getSource().toArray()[context.getSource().size() - 1]).getTitle();
+        Converter<Collection<JobProfileProgressStepModel>, Collection<JobProfileProgressStepDto>> progressStepConverter = context -> {
             AtomicInteger count = new AtomicInteger(1);
             return context.getSource().
                     stream()
@@ -161,7 +162,7 @@ public class JobProfileService {
 
         Converter<JobProfileModel, Boolean> isInHomeCountryConverter = (context -> context.getSource().getUserRef().getPersonalInfo().getCountry().getPhone().equals(context.getSource().getBasicInfo().getCountry().getPhone()));
         jobProfileModelToResponseMapper
-                .addMappings(mapper -> mapper.map(src -> src.getUserRef().getId(), JobProfileResponseDto::setUserRef))
+                .addMappings(mapper -> mapper.map(src -> src.getUserRef().getUserId(), JobProfileResponseDto::setUserId))
                 .addMappings(mapper -> mapper.when(hasProgress).using(lastProgressTitleConverter)
                         .map(JobProfileModel::getProgress, (dest, value) -> dest.getBasicInfo().setNote((String) value)))
                 .addMappings(mapper -> mapper.using(isInHomeCountryConverter)
@@ -170,17 +171,17 @@ public class JobProfileService {
                         .map(JobProfileModel::getProgress, JobProfileResponseDto::setProgress));
     }
 
-    private void addPageToPageResponseMapper(){
-        TypeMap<Page, PageResponse> jobProfilePageToResponsePageMapper = this.modelMapper.createTypeMap(Page.class, PageResponse.class);
-        jobProfilePageToResponsePageMapper
-                .addMappings(mapper -> mapper.map(Page::getTotalPages, (dest, value) -> dest.setTotalPages((Integer) value)))
-                .addMappings(mapper -> mapper.map(Page::getTotalElements, (dest, value) -> dest.setTotalCount((Long) value)))
-                .addMappings(mapper -> mapper.map(Page::getNumber, (dest, value) -> dest.setPageNumber((Integer) value)))
-                .addMappings(mapper -> mapper.map(Page::getSize, (dest, value) -> dest.setPageSize((Integer) value)))
-                .addMappings(mapper -> mapper.map(Page::getContent, (dest, value) -> dest.setContent((List)value)))
-                .addMappings(mapper -> mapper.map(Page::hasPrevious, (dest, value) -> dest.setHasPreviousPage((Boolean) value)))
-                .addMappings(mapper -> mapper.map(Page::hasNext, (dest, value) -> dest.setHasNextPage((Boolean) value)));
-    }
+//    private void addPageToPageResponseMapper(){
+//        TypeMap<Page, PageResponse> jobProfilePageToResponsePageMapper = this.modelMapper.createTypeMap(Page.class, PageResponse.class);
+//        jobProfilePageToResponsePageMapper
+//                .addMappings(mapper -> mapper.map(Page::getTotalPages, (dest, value) -> dest.setTotalPages((Integer) value)))
+//                .addMappings(mapper -> mapper.map(Page::getTotalElements, (dest, value) -> dest.setTotalCount((Long) value)))
+//                .addMappings(mapper -> mapper.map(Page::getNumber, (dest, value) -> dest.setPageNumber((Integer) value)))
+//                .addMappings(mapper -> mapper.map(Page::getSize, (dest, value) -> dest.setPageSize((Integer) value)))
+//                .addMappings(mapper -> mapper.map(Page::getContent, (dest, value) -> dest.setContent((List)value)))
+//                .addMappings(mapper -> mapper.map(Page::hasPrevious, (dest, value) -> dest.setHasPreviousPage((Boolean) value)))
+//                .addMappings(mapper -> mapper.map(Page::hasNext, (dest, value) -> dest.setHasNextPage((Boolean) value)));
+//    }
 
     private PageResponse<JobProfileResponseDto> pageToResponsePage(Page<JobProfileModel> jobProfilePage){
         PageResponse<JobProfileResponseDto> pageResponse = new PageResponse<>();

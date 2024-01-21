@@ -9,10 +9,10 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class JobProfileProgressStep {
+public class JobProfileProgressStepModel {
     private Integer progressStepId;
     private String title;
     private String description;
     private Date date;
-    private ProgressUploads uploads;
+    private ProgressUploadsModel uploads;
 }

@@ -1,17 +1,16 @@
-package dev.careeropz.cvmanagerservice.model.suggestion.subclasses;
+package dev.careeropz.cvmanagerservice.dto.suggestion;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RelatedIndustry {
+public class RelatedIndustryDto {
+    private String industryId;
     private String industry;
     private List<String> jobTitles;
 }

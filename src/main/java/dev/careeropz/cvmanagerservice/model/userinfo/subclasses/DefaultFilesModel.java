@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Country {
-    private String code;
-    private String label;
-    private String phone;
-    Boolean suggested;
+public class DefaultFilesModel {
+    private FileDataModel cv;
+    private FileDataModel coverLetter;
 }

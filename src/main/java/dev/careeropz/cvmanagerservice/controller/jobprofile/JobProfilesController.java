@@ -7,15 +7,12 @@ import dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto.BasicInfoRespon
 import dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto.JobProfileResponseDto;
 import dev.careeropz.cvmanagerservice.dto.pagination.CommonPaginationRequest;
 import dev.careeropz.cvmanagerservice.service.JobProfileService;
-import dev.careeropz.cvmanagerservice.service.PageResponse;
+import dev.careeropz.cvmanagerservice.dto.commondto.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController

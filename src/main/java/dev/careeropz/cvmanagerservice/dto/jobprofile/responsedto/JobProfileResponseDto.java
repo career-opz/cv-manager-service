@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class JobProfileResponseDto {
     private String jobProfileId;
-    private String userRef;
+    private String userId;
 
     private BasicInfoResponseDto basicInfo;
     private List<JobProfileProgressStepDto> progress;

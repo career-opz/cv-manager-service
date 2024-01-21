@@ -16,13 +16,13 @@ import java.util.List;
 public class UserInfoModel {
 
     @Id
-    private ObjectId id;
+    private ObjectId userId;
 
-    private PersonalInfo personalInfo;
-    private CareerInfo careerInfo;
-    private DefaultFiles defaultFiles;
-    private FileData profilePicture;
-    private Links links;
+    private PersonalInfoModel personalInfo;
+    private CareerInfoModel careerInfo;
+    private DefaultFilesModel defaultFiles;
+    private FileDataModel profilePicture;
+    private LinksModel links;
     private Date accountCreatedOn;
     private Date lastLoginOn;
     private Boolean accountActive;

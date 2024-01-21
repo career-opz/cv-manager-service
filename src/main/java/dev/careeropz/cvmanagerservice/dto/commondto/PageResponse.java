@@ -1,4 +1,4 @@
-package dev.careeropz.cvmanagerservice.service;
+package dev.careeropz.cvmanagerservice.dto.commondto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package dev.careeropz.cvmanagerservice.service;
+package dev.careeropz.cvmanagerservice.service.constant;
 
 public class ServiceConstants {
 

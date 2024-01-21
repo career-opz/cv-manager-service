@@ -17,6 +17,6 @@ public class JobProfileModel {
     @DocumentReference(lazy = true)
     private UserInfoModel userRef;
 
-    private BasicInfo basicInfo;
-    private List<JobProfileProgressStep> progress;
+    private BasicInfoModel basicInfo;
+    private List<JobProfileProgressStepModel> progress;
 }

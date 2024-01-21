@@ -9,11 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PersonalInfo {
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String mobile;
-    private String address;
-    private Country country;
+public class CareerInfoModel {
+    private String currentEmployer;
+    private String currentJobTitle;
+    private String industry;
 }

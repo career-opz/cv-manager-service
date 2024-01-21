@@ -1,4 +1,4 @@
-package dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto;
+package dev.careeropz.cvmanagerservice.dto.commondto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,8 +9,8 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FileDataRequestDto {
-    private String id;
+public class FileDataDto {
+    private String fileId;
     private String name;
     private Date dateUploaded;
 }

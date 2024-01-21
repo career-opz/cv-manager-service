@@ -2,11 +2,10 @@ package dev.careeropz.cvmanagerservice.controller.userprofile;
 
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto.LinksDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.CareerInfoRequestDto;
-import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.DefaultFilesRequestDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.PersonalInfoRequestDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.UserInfoRequestDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.CareerInfoResponseDto;
-import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.DefaultFilesResponseDto;
+import dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto.DefaultFilesDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.PersonalInfoResponseDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.UserInfoResponseDto;
 import dev.careeropz.cvmanagerservice.service.UserProfileService;
@@ -49,18 +48,18 @@ public class UserProfileController {
     }
 
     @GetMapping("/{userid}/default-docs")
-    public ResponseEntity<DefaultFilesResponseDto> getUserDefaultDocs(@PathVariable("userid") String userid) {
+    public ResponseEntity<DefaultFilesDto> getUserDefaultDocs(@PathVariable("userid") String userid) {
         log.info("getUserDefaultDocs :: userid: {} :: ENTER", userid);
-        DefaultFilesResponseDto defaultFilesResponseDto = userProfileService.getUserDefaultDocs(userid);
+        DefaultFilesDto defaultFilesDto = userProfileService.getUserDefaultDocs(userid);
         log.info("getUserDefaultDocs :: userid: {} :: DONE", userid);
-        return ResponseEntity.ok(defaultFilesResponseDto);
+        return ResponseEntity.ok(defaultFilesDto);
     }
 
     @PutMapping("/{userid}/default-docs")
-    public ResponseEntity<DefaultFilesResponseDto> updateUserDefaultDocs(@PathVariable("userid") String userid,
-                                                                         @RequestBody @Valid DefaultFilesRequestDto defaultFilesRequestDto) {
+    public ResponseEntity<DefaultFilesDto> updateUserDefaultDocs(@PathVariable("userid") String userid,
+                                                                 @RequestBody @Valid dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto.DefaultFilesDto defaultFilesDto) {
         log.info("updateUserDefaultDocs :: userid: {} :: ENTER", userid);
-        DefaultFilesResponseDto defaultFilesResponseDto = userProfileService.updateUserDefaultDocs(userid, defaultFilesRequestDto);
+        DefaultFilesDto defaultFilesResponseDto = userProfileService.updateUserDefaultDocs(userid, defaultFilesDto);
         log.info("updateUserDefaultDocs :: userid: {} :: DONE", userid);
         return ResponseEntity.ok(defaultFilesResponseDto);
     }

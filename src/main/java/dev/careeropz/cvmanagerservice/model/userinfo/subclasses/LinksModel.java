@@ -4,13 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FileData {
-    private String fileId;
-    private String name;
-    private Date dateUploaded;
+public class LinksModel {
+    private String linkedIn;
+    private String github;
+    private String portfolio;
 }

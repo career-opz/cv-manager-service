@@ -2,21 +2,20 @@ package dev.careeropz.cvmanagerservice.service;
 
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto.LinksDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.CareerInfoRequestDto;
-import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.DefaultFilesRequestDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.PersonalInfoRequestDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.UserInfoRequestDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.CareerInfoResponseDto;
-import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.DefaultFilesResponseDto;
+import dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto.DefaultFilesDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.PersonalInfoResponseDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto.UserInfoResponseDto;
 import dev.careeropz.cvmanagerservice.exception.IncorrectRequestDataException;
 import dev.careeropz.cvmanagerservice.exception.ResourceNotFoundException;
 import dev.careeropz.cvmanagerservice.model.userinfo.UserInfoModel;
 import dev.careeropz.cvmanagerservice.model.jobprofile.JobProfileModel;
-import dev.careeropz.cvmanagerservice.model.userinfo.subclasses.CareerInfo;
-import dev.careeropz.cvmanagerservice.model.userinfo.subclasses.DefaultFiles;
-import dev.careeropz.cvmanagerservice.model.userinfo.subclasses.Links;
-import dev.careeropz.cvmanagerservice.model.userinfo.subclasses.PersonalInfo;
+import dev.careeropz.cvmanagerservice.model.userinfo.subclasses.CareerInfoModel;
+import dev.careeropz.cvmanagerservice.model.userinfo.subclasses.DefaultFilesModel;
+import dev.careeropz.cvmanagerservice.model.userinfo.subclasses.LinksModel;
+import dev.careeropz.cvmanagerservice.model.userinfo.subclasses.PersonalInfoModel;
 import dev.careeropz.cvmanagerservice.repository.UserInfoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.Condition;
@@ -31,7 +30,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 import static dev.careeropz.cvmanagerservice.constant.ExceptionConstants.*;
-import static dev.careeropz.cvmanagerservice.service.ServiceConstants.*;
+import static dev.careeropz.cvmanagerservice.service.constant.ServiceConstants.*;
 
 @Service
 @Slf4j
@@ -81,19 +80,19 @@ public class UserProfileService {
         }
     }
 
-    public DefaultFilesResponseDto getUserDefaultDocs(String userId) {
+    public DefaultFilesDto getUserDefaultDocs(String userId) {
         log.info("getUserDefaultDocs :: userid: {} :: ENTER", userId);
         return userInfoRepository.findById(userId)
                 .map(userInfo -> {
                     log.info("getUserDefaultDocs :: userInfoRepository:findById :: userid: {} :: DONE", userId);
-                    DefaultFilesResponseDto defaultFilesResponseDto = modelMapper.map(userInfo.getDefaultFiles(), DefaultFilesResponseDto.class);
+                    DefaultFilesDto defaultFilesDto = modelMapper.map(userInfo.getDefaultFiles(), DefaultFilesDto.class);
                     log.info("getUserDefaultDocs :: userid: {} :: DONE", userId);
-                    return defaultFilesResponseDto;
+                    return defaultFilesDto;
                 })
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId)));
     }
 
-    public DefaultFilesResponseDto updateUserDefaultDocs(String userId, DefaultFilesRequestDto defaultFilesRequestDto) {
+    public DefaultFilesDto updateUserDefaultDocs(String userId, dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto.DefaultFilesDto defaultFilesDto) {
         try {
             log.info("updateUserDefaultDocs :: userid: {} :: ENTER", userId);
             Optional<UserInfoModel> existingUserOptional = userInfoRepository.findById(userId);
@@ -102,12 +101,12 @@ public class UserProfileService {
                 throw new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId));
             }
             UserInfoModel existingUser = existingUserOptional.get();
-            updateDefaultInfo(defaultFilesRequestDto, existingUser);
+            updateDefaultInfo(defaultFilesDto, existingUser);
 
             UserInfoModel updatedModel = userInfoRepository.save(existingUser);
             log.info("updateUserDefaultDocs :: userid: {} :: DONE", userId);
 
-            return modelMapper.map(updatedModel.getDefaultFiles(), DefaultFilesResponseDto.class);
+            return modelMapper.map(updatedModel.getDefaultFiles(), DefaultFilesDto.class);
         } catch (MappingException e) {
             log.error("updateUserDefaultDocs :: mapping request to model :: MappingException occurred", e);
             throw new IncorrectRequestDataException(INCORRECT_REQUEST_DATA);
@@ -164,7 +163,7 @@ public class UserProfileService {
             throw new ResourceNotFoundException(String.format("%s :%s", USER_NOT_FOUND, userId));
         }
         UserInfoModel existingUser = existingUserOptional.get();
-        Links updatesLinks = modelMapper.map(linksDto, Links.class);
+        LinksModel updatesLinks = modelMapper.map(linksDto, LinksModel.class);
         existingUser.setLinks(updatesLinks);
 
         UserInfoModel updatedModel = userInfoRepository.save(existingUser);
@@ -258,18 +257,18 @@ public class UserProfileService {
         log.info("removeJobProfileFromUserProfile :: userid: {} :: DONE", userId);
     }
 
-    private void updateDefaultInfo(DefaultFilesRequestDto defaultFilesRequestDto, UserInfoModel targetModel) {
-        DefaultFiles defaultFiles = modelMapper.map(defaultFilesRequestDto, DefaultFiles.class);
+    private void updateDefaultInfo(dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto.DefaultFilesDto defaultFilesDto, UserInfoModel targetModel) {
+        DefaultFilesModel defaultFiles = modelMapper.map(defaultFilesDto, DefaultFilesModel.class);
         targetModel.setDefaultFiles(defaultFiles);
     }
 
     private void updatePersonalInfo(PersonalInfoRequestDto personalInfoRequestDto, UserInfoModel targetModel) {
-        PersonalInfo personalInfo = modelMapper.map(personalInfoRequestDto, PersonalInfo.class);
+        PersonalInfoModel personalInfo = modelMapper.map(personalInfoRequestDto, PersonalInfoModel.class);
         targetModel.setPersonalInfo(personalInfo);
     }
 
     private void updateCareerInfo(CareerInfoRequestDto careerInfoRequestDto, UserInfoModel targetModel) {
-        CareerInfo careerInfo = modelMapper.map(careerInfoRequestDto, CareerInfo.class);
+        CareerInfoModel careerInfo = modelMapper.map(careerInfoRequestDto, CareerInfoModel.class);
         targetModel.setCareerInfo(careerInfo);
     }
 
