@@ -22,5 +22,5 @@ Otherwise you can use intellij to run the CV manager service
 Make sure Portal backend service is already up so that UI can communicate with this service
 ## Documentation
 
-[swager-docs](http://localhost:9091/swagger-ui/index.html)
+[swager-docs](http://localhost:9092/swagger-ui/index.html)
 

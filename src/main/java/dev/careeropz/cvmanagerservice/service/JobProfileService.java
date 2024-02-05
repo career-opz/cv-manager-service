@@ -1,9 +1,9 @@
 package dev.careeropz.cvmanagerservice.service;
 
-import dev.careeropz.cvmanagerservice.dto.commondto.PageResponse;
-import dev.careeropz.cvmanagerservice.dto.jobprofile.commondto.JobProfileProgressStepDto;
-import dev.careeropz.cvmanagerservice.dto.jobprofile.requestdto.BasicInfoRequestDto;
-import dev.careeropz.cvmanagerservice.dto.jobprofile.requestdto.JobProfileRequestDto;
+import dev.careeropz.commons.dto.PageResponse;
+import dev.careeropz.commons.jobprofile.commondto.JobProfileProgressStepDto;
+import dev.careeropz.commons.jobprofile.requestdto.BasicInfoRequestDto;
+import dev.careeropz.commons.jobprofile.requestdto.JobProfileRequestDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto.BasicInfoResponseDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto.JobProfileResponseDto;
 import dev.careeropz.cvmanagerservice.dto.pagination.CommonPaginationRequest;
@@ -36,10 +36,10 @@ public class JobProfileService {
     private final JobProfileRepository jobProfileRepository;
     private final ModelMapper modelMapper;
 
-    public JobProfileService(UserProfileService userProfileService, JobProfileRepository jobProfileRepository, ModelMapper modelMapper) {
+    public JobProfileService(UserProfileService userProfileService, JobProfileRepository jobProfileRepository) {
         this.userProfileService = userProfileService;
         this.jobProfileRepository = jobProfileRepository;
-        this.modelMapper = modelMapper;
+        this.modelMapper = new ModelMapper();
 
         // configuring custom mappers
         addJobProfileToResponseMapper();
@@ -64,11 +64,14 @@ public class JobProfileService {
     }
 
     @Transactional
-    public JobProfileResponseDto createJobProfile(String userid, JobProfileRequestDto jobProfileRequestDto) {
+    public JobProfileResponseDto createJobProfile(String userid, BasicInfoRequestDto basicInfoRequestDto) {
 
         try {
             log.info("JobProfileService::createJobProfile Creating a new job profile ::ENTER");
             UserInfoModel userInfoModel = userProfileService.getUserInfoModel(userid);
+            JobProfileRequestDto jobProfileRequestDto = JobProfileRequestDto.builder()
+                    .basicInfo(basicInfoRequestDto)
+                    .build();
             JobProfileModel jobProfileModel = modelMapper.map(jobProfileRequestDto, JobProfileModel.class);
             jobProfileModel.setUserRef(userInfoModel);
 
@@ -110,18 +113,18 @@ public class JobProfileService {
         }
     }
 
-    public JobProfileResponseDto updateJobProfileProgressStep(String userid, String jobProfileId, JobProfileProgressStepDto jobProfileProgressStepDto) {
+    public JobProfileResponseDto createJobProfileProgressStep(String userid, String jobProfileId, JobProfileProgressStepDto jobProfileProgressStepDto) {
         try {
-            log.info("JobProfileService::updateJobProfileProgressStep Updating job profile progress step for job profile id: {} ::ENTER", jobProfileId);
+            log.info("JobProfileService::createJobProfileProgressStep Updating job profile progress step for job profile id: {} ::ENTER", jobProfileId);
             JobProfileModel jobProfileModel = jobProfileRepository.findById(jobProfileId)
                     .orElseThrow(() -> new ResourceNotFoundException(String.format("%s :%s", JOB_PROFILE_NOT_FOUND, jobProfileId)));
             JobProfileProgressStepModel jobProfileProgressStep = modelMapper.map(jobProfileProgressStepDto, JobProfileProgressStepModel.class);
             jobProfileModel.getProgress().add(jobProfileProgressStep);
             JobProfileModel savedModel = jobProfileRepository.save(jobProfileModel);
-            log.info("JobProfileService::updateJobProfileProgressStep Updating job profile progress step for job profile id: {} ::DONE", jobProfileId);
+            log.info("JobProfileService::createJobProfileProgressStep Updating job profile progress step for job profile id: {} ::DONE", jobProfileId);
             return modelMapper.map(savedModel, JobProfileResponseDto.class);
         } catch (MappingException e) {
-            log.error("JobProfileService::updateJobProfileProgressStep Error occurred while mapping request to model", e);
+            log.error("JobProfileService::createJobProfileProgressStep Error occurred while mapping request to model", e);
             throw new IncorrectRequestDataException(INCORRECT_REQUEST_DATA);
         }
     }

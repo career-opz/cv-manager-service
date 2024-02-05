@@ -1,6 +1,6 @@
 package dev.careeropz.cvmanagerservice.dto.userprofiledto.responsedto;
 
-import dev.careeropz.cvmanagerservice.dto.commondto.CountryDto;
+import dev.careeropz.commons.dto.CountryDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

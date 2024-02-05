@@ -1,6 +1,6 @@
 package dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto;
 
-import dev.careeropz.cvmanagerservice.dto.commondto.FileDataDto;
+import dev.careeropz.commons.dto.FileDataDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

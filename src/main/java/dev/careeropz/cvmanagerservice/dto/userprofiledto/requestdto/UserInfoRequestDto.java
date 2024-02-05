@@ -1,6 +1,6 @@
 package dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto;
 
-import dev.careeropz.cvmanagerservice.dto.commondto.FileDataDto;
+import dev.careeropz.commons.dto.FileDataDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto.DefaultFilesDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto.LinksDto;
 import jakarta.validation.Valid;

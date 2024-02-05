@@ -1,6 +1,6 @@
 package dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto;
 
-import dev.careeropz.cvmanagerservice.dto.commondto.CountryDto;
+import dev.careeropz.commons.dto.CountryDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

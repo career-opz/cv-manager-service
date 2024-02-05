@@ -1,13 +1,13 @@
 package dev.careeropz.cvmanagerservice.controller.jobprofile;
 
-import dev.careeropz.cvmanagerservice.dto.jobprofile.commondto.JobProfileProgressStepDto;
-import dev.careeropz.cvmanagerservice.dto.jobprofile.requestdto.BasicInfoRequestDto;
-import dev.careeropz.cvmanagerservice.dto.jobprofile.requestdto.JobProfileRequestDto;
+import dev.careeropz.commons.jobprofile.commondto.JobProfileProgressStepDto;
+import dev.careeropz.commons.jobprofile.requestdto.BasicInfoRequestDto;
+import dev.careeropz.commons.jobprofile.requestdto.JobProfileRequestDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto.BasicInfoResponseDto;
 import dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto.JobProfileResponseDto;
 import dev.careeropz.cvmanagerservice.dto.pagination.CommonPaginationRequest;
 import dev.careeropz.cvmanagerservice.service.JobProfileService;
-import dev.careeropz.cvmanagerservice.dto.commondto.PageResponse;
+import dev.careeropz.commons.dto.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,9 +36,9 @@ public class JobProfilesController {
 
     @PostMapping
     public ResponseEntity<JobProfileResponseDto> createJobProfile(@PathVariable("userid") String userId,
-                                                                  @RequestBody @Valid JobProfileRequestDto jobProfileRequestDto) {
+                                                                  @RequestBody @Valid BasicInfoRequestDto basicInfoRequestDto) {
         log.info("JobProfilesController::createJobProfile Creating job profile for a user id: {} ::ENTER", userId);
-        JobProfileResponseDto jobProfileResponseDto = jobProfileService.createJobProfile(userId, jobProfileRequestDto);
+        JobProfileResponseDto jobProfileResponseDto = jobProfileService.createJobProfile(userId, basicInfoRequestDto);
         log.info("JobProfilesController::createJobProfile Creating job profile for a user id: {} ::DONE", userId);
         return ResponseEntity.ok(jobProfileResponseDto);
     }
@@ -70,13 +70,13 @@ public class JobProfilesController {
         return ResponseEntity.ok("Job profile deleted successfully");
     }
 
-    @PutMapping("/{job-profile-id}/progress-step")
-    public ResponseEntity<JobProfileResponseDto> updateJobProfileProgressStep(@PathVariable("userid") String userId,
+    @PostMapping("/{job-profile-id}/progress-step")
+    public ResponseEntity<JobProfileResponseDto> createJobProfileProgressStep(@PathVariable("userid") String userId,
                                                                               @PathVariable("job-profile-id") String jobProfileId,
                                                                               @RequestBody @Valid JobProfileProgressStepDto jobProfileProgressStepDto) {
-        log.info("JobProfilesController::updateJobProfileProgressStep Updating job profile progress step for job profile id: {} ::ENTER", jobProfileId);
-        JobProfileResponseDto jobProfileResponseDto = jobProfileService.updateJobProfileProgressStep(userId, jobProfileId, jobProfileProgressStepDto);
-        log.info("JobProfilesController::updateJobProfileProgressStep Updating job profile progress step for job profile id: {} ::DONE", jobProfileId);
+        log.info("JobProfilesController::createJobProfileProgressStep creating new job profile progress step for job profile id: {} ::ENTER", jobProfileId);
+        JobProfileResponseDto jobProfileResponseDto = jobProfileService.createJobProfileProgressStep(userId, jobProfileId, jobProfileProgressStepDto);
+        log.info("JobProfilesController::createJobProfileProgressStep creating new job profile progress step for job profile id: {} ::DONE", jobProfileId);
         return ResponseEntity.ok(jobProfileResponseDto);
     }
 

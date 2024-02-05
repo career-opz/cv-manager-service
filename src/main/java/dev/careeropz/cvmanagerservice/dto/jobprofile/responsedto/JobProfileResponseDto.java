@@ -1,6 +1,6 @@
 package dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto;
 
-import dev.careeropz.cvmanagerservice.dto.jobprofile.commondto.JobProfileProgressStepDto;
+import dev.careeropz.commons.jobprofile.commondto.JobProfileProgressStepDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

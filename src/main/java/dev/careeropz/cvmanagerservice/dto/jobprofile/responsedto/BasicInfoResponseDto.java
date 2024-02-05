@@ -1,6 +1,6 @@
 package dev.careeropz.cvmanagerservice.dto.jobprofile.responsedto;
 
-import dev.careeropz.cvmanagerservice.dto.jobprofile.commondto.JobProfileStatus;
+import dev.careeropz.commons.jobprofile.commondto.JobProfileStatus;
 import dev.careeropz.cvmanagerservice.model.userinfo.subclasses.CountryModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
