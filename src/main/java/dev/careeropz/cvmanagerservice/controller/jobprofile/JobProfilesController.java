@@ -80,6 +80,17 @@ public class JobProfilesController {
         return ResponseEntity.ok(jobProfileResponseDto);
     }
 
+    @PutMapping("/{job-profile-id}/progress-step/{progress-step-id}")
+    public ResponseEntity<JobProfileResponseDto> updateJobProfileProgressStep(@PathVariable("userid") String userId,
+                                                                              @PathVariable("job-profile-id") String jobProfileId,
+                                                                              @PathVariable("progress-step-id") String uniqueId,
+                                                                              @RequestBody @Valid JobProfileProgressStepDto jobProfileProgressStepDto) {
+        log.info("JobProfilesController::updateJobProfileProgressStep updating job profile progress step for job profile id: {} ::ENTER", jobProfileId);
+        JobProfileResponseDto jobProfileResponseDto = jobProfileService.updateJobProfileProgressStep(userId, jobProfileId, uniqueId, jobProfileProgressStepDto);
+        log.info("JobProfilesController::updateJobProfileProgressStep updating job profile progress step for job profile id: {} ::DONE", jobProfileId);
+        return ResponseEntity.ok(jobProfileResponseDto);
+    }
+
     @PutMapping("/{job-profile-id}/basic-info")
     public ResponseEntity<BasicInfoResponseDto> updateJobProfileBasicInfo(@PathVariable("userid") String userId,
                                                                            @PathVariable("job-profile-id") String jobProfileId,

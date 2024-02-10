@@ -11,6 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class JobProfileProgressStepModel {
     private Integer progressStepId;
+    private String uniqueId;
     private String title;
     private String description;
     private Date date;

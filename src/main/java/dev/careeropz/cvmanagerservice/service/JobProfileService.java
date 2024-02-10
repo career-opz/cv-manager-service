@@ -10,10 +10,10 @@ import dev.careeropz.cvmanagerservice.dto.pagination.CommonPaginationRequest;
 import dev.careeropz.cvmanagerservice.exception.DbOperationFailedException;
 import dev.careeropz.cvmanagerservice.exception.IncorrectRequestDataException;
 import dev.careeropz.cvmanagerservice.exception.ResourceNotFoundException;
-import dev.careeropz.cvmanagerservice.model.userinfo.UserInfoModel;
 import dev.careeropz.cvmanagerservice.model.jobprofile.BasicInfoModel;
 import dev.careeropz.cvmanagerservice.model.jobprofile.JobProfileModel;
 import dev.careeropz.cvmanagerservice.model.jobprofile.JobProfileProgressStepModel;
+import dev.careeropz.cvmanagerservice.model.userinfo.UserInfoModel;
 import dev.careeropz.cvmanagerservice.repository.JobProfileRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -119,7 +119,41 @@ public class JobProfileService {
             JobProfileModel jobProfileModel = jobProfileRepository.findById(jobProfileId)
                     .orElseThrow(() -> new ResourceNotFoundException(String.format("%s :%s", JOB_PROFILE_NOT_FOUND, jobProfileId)));
             JobProfileProgressStepModel jobProfileProgressStep = modelMapper.map(jobProfileProgressStepDto, JobProfileProgressStepModel.class);
+
+            String progressStepUniqueId = java.util.UUID.randomUUID().toString();
+            jobProfileProgressStep.setUniqueId(progressStepUniqueId);
+
+            if (jobProfileModel.getProgress() == null) {
+                jobProfileModel.setProgress(new java.util.ArrayList<>());
+            }
             jobProfileModel.getProgress().add(jobProfileProgressStep);
+            JobProfileModel savedModel = jobProfileRepository.save(jobProfileModel);
+            log.info("JobProfileService::createJobProfileProgressStep Updating job profile progress step for job profile id: {} ::DONE", jobProfileId);
+            return modelMapper.map(savedModel, JobProfileResponseDto.class);
+        } catch (MappingException e) {
+            log.error("JobProfileService::createJobProfileProgressStep Error occurred while mapping request to model", e);
+            throw new IncorrectRequestDataException(INCORRECT_REQUEST_DATA);
+        }
+    }
+
+    public JobProfileResponseDto updateJobProfileProgressStep(String userid, String jobProfileId, String uniqueId, JobProfileProgressStepDto jobProfileProgressStepDto) {
+        try {
+            log.info("JobProfileService::createJobProfileProgressStep Updating job profile progress step for job profile id: {} ::ENTER", jobProfileId);
+            JobProfileModel jobProfileModel = jobProfileRepository.findById(jobProfileId)
+                    .orElseThrow(() -> new ResourceNotFoundException(String.format("%s :%s", JOB_PROFILE_NOT_FOUND, jobProfileId)));
+            JobProfileProgressStepModel jobProfileProgressStep = modelMapper.map(jobProfileProgressStepDto, JobProfileProgressStepModel.class);
+
+            jobProfileModel.getProgress().stream()
+                    .filter(step -> uniqueId.equals(step.getUniqueId()))
+                    .findFirst()
+                    .ifPresentOrElse(step -> {
+                        step.setTitle(jobProfileProgressStep.getTitle());
+                        step.setDescription(jobProfileProgressStep.getDescription());
+                        step.setDate(jobProfileProgressStep.getDate());
+                        step.setUploads(jobProfileProgressStep.getUploads());
+                    }, () -> {
+                        throw new ResourceNotFoundException(String.format("%s :%s", PROGRESS_STEP_NOT_FOUND, uniqueId));
+                    });
             JobProfileModel savedModel = jobProfileRepository.save(jobProfileModel);
             log.info("JobProfileService::createJobProfileProgressStep Updating job profile progress step for job profile id: {} ::DONE", jobProfileId);
             return modelMapper.map(savedModel, JobProfileResponseDto.class);
@@ -172,7 +206,7 @@ public class JobProfileService {
                         .map(JobProfileModel::getProgress, JobProfileResponseDto::setProgress));
     }
 
-    private PageResponse<JobProfileResponseDto> pageToResponsePage(Page<JobProfileModel> jobProfilePage){
+    private PageResponse<JobProfileResponseDto> pageToResponsePage(Page<JobProfileModel> jobProfilePage) {
         PageResponse<JobProfileResponseDto> pageResponse = new PageResponse<>();
         pageResponse.setTotalPages(jobProfilePage.getTotalPages());
         pageResponse.setTotalCount(jobProfilePage.getTotalElements());
