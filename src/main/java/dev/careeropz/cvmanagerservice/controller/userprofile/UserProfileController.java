@@ -1,5 +1,6 @@
 package dev.careeropz.cvmanagerservice.controller.userprofile;
 
+import dev.careeropz.commons.userinfo.UserProfileCheckRequestDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto.LinksDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.CareerInfoRequestDto;
 import dev.careeropz.cvmanagerservice.dto.userprofiledto.requestdto.PersonalInfoRequestDto;
@@ -14,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @RequiredArgsConstructor
 @RestController
@@ -105,5 +108,34 @@ public class UserProfileController {
         String response = userProfileService.activateUserProfile(userid);
         log.info("activateUserProfile :: userid: {} :: DONE", userid);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{userid}/check")
+    public ResponseEntity<Boolean> checkUserProfileAvailability(@PathVariable("userid") String userid, @RequestBody UserProfileCheckRequestDto userProfileCheckRequestDto) {
+        log.info("checkUserProfileAvailability :: userid: {} :: ENTER", userid);
+        Boolean response = userProfileService.checkUserProfileAvailability(userid);
+        if(Boolean.TRUE.equals(response)) {
+            return ResponseEntity.ok(true);
+        }
+        else{
+            PersonalInfoRequestDto personalInfoRequestDto = PersonalInfoRequestDto.builder()
+                    .firstName(userProfileCheckRequestDto.getFirstName())
+                    .lastName(userProfileCheckRequestDto.getLastName())
+                    .email(userProfileCheckRequestDto.getEmail())
+                    .build();
+
+            UserInfoRequestDto userInfoRequestDto = UserInfoRequestDto.builder()
+                    .userId(userid)
+                    .personalInfo(personalInfoRequestDto)
+                    .build();
+
+            UserInfoResponseDto userInfoResponseDto = userProfileService.createUserProfile(userInfoRequestDto);
+            log.info("checkUserProfileAvailability :: userid: {} :: DONE", userid);
+            if(userInfoResponseDto != null) {
+                return ResponseEntity.created(URI.create("/cv/api/v1/userprofile/" + userid)).body(true);
+            }
+            return ResponseEntity.badRequest().body(false);
+        }
+
     }
 }

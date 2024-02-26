@@ -16,7 +16,7 @@ import java.util.List;
 public class UserInfoModel {
 
     @Id
-    private ObjectId userId;
+    private String userId;
 
     private PersonalInfoModel personalInfo;
     private CareerInfoModel careerInfo;

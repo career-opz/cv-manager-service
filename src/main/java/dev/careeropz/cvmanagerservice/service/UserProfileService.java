@@ -18,6 +18,7 @@ import dev.careeropz.cvmanagerservice.model.userinfo.subclasses.LinksModel;
 import dev.careeropz.cvmanagerservice.model.userinfo.subclasses.PersonalInfoModel;
 import dev.careeropz.cvmanagerservice.repository.UserInfoRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.modelmapper.Condition;
 import org.modelmapper.Converter;
 import org.modelmapper.MappingException;
@@ -42,6 +43,7 @@ public class UserProfileService {
         this.userInfoRepository = userInfoRepository;
         this.modelMapper = modelMapper;
         addUserProfileToResponseMapper();
+//        addUserInfoRequestToModelMapper();
     }
 
     public UserInfoResponseDto getUserProfile(String userId) {
@@ -257,6 +259,11 @@ public class UserProfileService {
         log.info("removeJobProfileFromUserProfile :: userid: {} :: DONE", userId);
     }
 
+    public boolean checkUserProfileAvailability(String userId) {
+        log.info("checkUserProfileAvailability :: userid: {} :: ENTER", userId);
+        return userInfoRepository.existsById(userId);
+    }
+
     private void updateDefaultInfo(dev.careeropz.cvmanagerservice.dto.userprofiledto.commondto.DefaultFilesDto defaultFilesDto, UserInfoModel targetModel) {
         DefaultFilesModel defaultFiles = modelMapper.map(defaultFilesDto, DefaultFilesModel.class);
         targetModel.setDefaultFiles(defaultFiles);
@@ -290,4 +297,13 @@ public class UserProfileService {
                 .addMappings(mapper -> mapper.when(hasJobProfile).using(jobProfileConverter)
                         .map(UserInfoModel::getJobProfiles, UserInfoResponseDto::setJobProfiles));
     }
+
+//    private void addUserInfoRequestToModelMapper(){
+//        Condition<String, ObjectId> hasUserId = ctx -> ctx.getSource() != null && !ctx.getSource().isEmpty();
+//        Converter<String, ObjectId> userIdConverter = ctx -> new ObjectId(ctx.getSource());
+//
+//        modelMapper.typeMap(UserInfoRequestDto.class, UserInfoModel.class)
+//                .addMappings(mapper -> mapper.when(hasUserId)
+//                        .map(UserInfoRequestDto::getUserId, UserInfoModel::setUserId));
+//    }
 }
