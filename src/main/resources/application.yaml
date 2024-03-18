@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://career-opz-admin:BFmy7vGno3iuj59a@cluster0.56yjiim.mongodb.net/?retryWrites=true&w=majority
+      uri: mongodb+srv://career-opz-admin:kdVsJ6yoPstoXcT7@cluster0.56yjiim.mongodb.net/?retryWrites=true&w=majority
       database: Cluster0
 
 server:
