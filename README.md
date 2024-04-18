@@ -21,6 +21,7 @@ To install the project if you want
 Otherwise you can use intellij to run the CV manager service
 Make sure Portal backend service is already up so that UI can communicate with this service
 ## Documentation
-
 [swager-docs](http://localhost:9092/swagger-ui/index.html)
+### High level Architecture diagram
+![Highlevel Architecture](https://github.com/career-opz/portal-backend/blob/main/docs/images/archi.png?raw=true)
 
